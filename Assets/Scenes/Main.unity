@@ -210,7 +210,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 678833548}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 17.2, y: 4.5, z: 33.2}
+  m_LocalPosition: {x: 17.2, y: 11.43, z: 33.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -261,8 +261,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorPrefab: {fileID: 6243778842003243801, guid: e799c66afb358f11fbe4fb7f7595928e, type: 3}
   wallPrefab: {fileID: 6819998979313002283, guid: 9cd8866c5f5cc491fb14c8e6525d3676, type: 3}
+  roomPrefab: {fileID: 6243778842003243801, guid: 680a523c285e88994a58d1fde1746b9f, type: 3}
   levelSize: 10
   tileSize: 5
+  prefferedMinNbrRoom: 5
+  maxNbrRoom: 5
+  MinRoomSize: {x: 2, y: 2}
+  MaxRoomSize: {x: 5, y: 5}
 --- !u!1 &1211856801
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,8 +344,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1211856801}
-  m_LocalRotation: {x: 0.11092247, y: 0.020930044, z: -0.002338787, w: 0.993606}
-  m_LocalPosition: {x: 3, y: 2, z: 3}
+  m_LocalRotation: {x: 0.63840365, y: -0.0022609904, z: 0.0018757599, w: 0.7696962}
+  m_LocalPosition: {x: 23.29332, y: 65.189964, z: 13.703263}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
