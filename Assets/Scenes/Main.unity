@@ -263,12 +263,14 @@ MonoBehaviour:
   wallPrefab: {fileID: 6819998979313002283, guid: 9cd8866c5f5cc491fb14c8e6525d3676, type: 3}
   roomPrefab: {fileID: 6243778842003243801, guid: 680a523c285e88994a58d1fde1746b9f, type: 3}
   corridorPrefab: {fileID: 8435076937535421658, guid: aa8616ee911962045905c0a6f672b489, type: 3}
+  enemyPrefab: {fileID: 8600829949028676582, guid: d9620f7c8052770b78095659708d4339, type: 3}
   levelSize: 10
   tileSize: 5
   prefferedMinNbrRoom: 50
   maxNbrRoom: 50
   MinRoomSize: {x: 2, y: 2}
   MaxRoomSize: {x: 3, y: 3}
+  nbrEnemies: 3
 --- !u!1 &1211856801
 GameObject:
   m_ObjectHideFlags: 0
