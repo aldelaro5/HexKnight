@@ -78,6 +78,8 @@ public class LevelGenerator : MonoBehaviour
 
   private Tile[][] levelTiles;
 
+  public int TileSize { get => tileSize; }
+
   void Start()
   {
     InitialiseGenerator();
@@ -85,8 +87,8 @@ public class LevelGenerator : MonoBehaviour
     GenerateCorridors();
     GenerateEnemies();
     GenerateLevelFromTiles();
-    GameObject player = Instantiate(playerPrefab, new Vector3((float)tileSize / 2f, 0, (float)tileSize / 2f),
-                                    Quaternion.identity, this.transform);
+    Vector3 startCenter = new Vector3((float)tileSize / 2f, 0, (float)tileSize / 2f);
+    GameObject player = Instantiate(playerPrefab, startCenter, Quaternion.identity);
     player.name = "Player";
   }
 
