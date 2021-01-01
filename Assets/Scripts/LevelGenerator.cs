@@ -60,6 +60,7 @@ public class LevelGenerator : MonoBehaviour
   [SerializeField] private GameObject roomPrefab;
   [SerializeField] private GameObject corridorPrefab;
   [SerializeField] private GameObject enemyPrefab;
+  [SerializeField] private GameObject playerPrefab;
 
   [SerializeField] [Min(6)] private int levelSize = 10;
   [SerializeField] [Min(1)] private int tileSize = 5;
@@ -84,6 +85,9 @@ public class LevelGenerator : MonoBehaviour
     GenerateCorridors();
     GenerateEnemies();
     GenerateLevelFromTiles();
+    GameObject player = Instantiate(playerPrefab, new Vector3((float)tileSize / 2f, 0, (float)tileSize / 2f),
+                                    Quaternion.identity, this.transform);
+    player.name = "Player";
   }
 
   private void GenerateEnemies()
@@ -515,7 +519,7 @@ public class LevelGenerator : MonoBehaviour
         if (prefabObj != null)
         {
           Vector3 posCenter = new Vector3(i * tileSize + (float)tileSize / 2f, 0, j * tileSize + (float)tileSize / 2f);
-          Instantiate(prefabObj, posCenter, Quaternion.identity, objTile.transform);
+          Instantiate(prefabObj, posCenter, Quaternion.identity, this.transform);
         }
       }
     }
