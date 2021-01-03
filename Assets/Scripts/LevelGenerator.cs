@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -22,15 +21,7 @@ public class LevelGenerator : MonoBehaviour
     Enemy
   }
 
-  private enum CorridorDirection
-  {
-    Up = 0,
-    Right,
-    Down,
-    Left
-  }
-
-  private readonly List<CorridorDirection> directions = Enum.GetValues(typeof(CorridorDirection)).Cast<CorridorDirection>().ToList();
+  private readonly Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>().ToArray();
 
   private struct Room
   {
@@ -40,7 +31,7 @@ public class LevelGenerator : MonoBehaviour
 
   private struct CorridorCandidate
   {
-    public CorridorDirection direction;
+    public Direction direction;
     public Vector2Int pos;
     public List<Vector2Int> tiles;
   }
@@ -75,19 +66,44 @@ public class LevelGenerator : MonoBehaviour
   [SerializeField] private int nbrEnemies = 3;
 
   private Vector3 tileScaleVec;
+  private float halfTileSize;
 
   private Tile[][] levelTiles;
+  private bool[][] reservedTiles;
 
   public int TileSize { get => tileSize; }
 
-  void Start()
+  public bool IsTileReserved(Vector2Int tile) 
   {
+    if (tile.x < 0 || tile.y < 0 || tile.x >= levelSize || tile.y >= levelSize)
+      return true;
+    return reservedTiles[tile.x][tile.y];
+  }
+
+  public void ReserveTile(Vector2Int tile) => reservedTiles[tile.x][tile.y] = true;
+  public void FreeTile(Vector2Int tile) => reservedTiles[tile.x][tile.y] = false;
+
+  public Vector2Int Vec3CenterToTile(Vector3 vec3)
+  {
+    return new Vector2Int(Mathf.RoundToInt((vec3.x - halfTileSize)) / tileSize,
+                          Mathf.RoundToInt((vec3.z - halfTileSize)) / tileSize);
+  }
+
+  public Vector3 TileToVec3Center(Vector2Int tile)
+  {
+    return new Vector3((float)tile.x * (float)tileSize + halfTileSize, 0,
+                       (float)tile.y * (float)tileSize + halfTileSize);
+  }
+
+  private void Start()
+  {
+    halfTileSize = (float)tileSize / 2f;
     InitialiseGenerator();
     GenerateRooms();
     GenerateCorridors();
     GenerateEnemies();
     GenerateLevelFromTiles();
-    Vector3 startCenter = new Vector3((float)tileSize / 2f, 0, (float)tileSize / 2f);
+    Vector3 startCenter = new Vector3(halfTileSize, 0, halfTileSize);
     GameObject player = Instantiate(playerPrefab, startCenter, Quaternion.identity);
     player.name = "Player";
   }
@@ -179,7 +195,7 @@ public class LevelGenerator : MonoBehaviour
     {
       switch (direction)
       {
-        case CorridorDirection.Up:
+        case Direction.Up:
           if (room.posBottomLeft.y + room.size.y > levelSize)
             break;
 
@@ -187,7 +203,7 @@ public class LevelGenerator : MonoBehaviour
           {
             int y = room.posBottomLeft.y + room.size.y;
             CorridorCandidate candidate;
-            candidate.direction = CorridorDirection.Up;
+            candidate.direction = Direction.Up;
             candidate.pos = new Vector2Int(x, y);
             candidate.tiles = new List<Vector2Int>();
             while (y < levelSize)
@@ -202,7 +218,7 @@ public class LevelGenerator : MonoBehaviour
             possibleCorridors.Add(candidate);
           }
           break;
-        case CorridorDirection.Right:
+        case Direction.Right:
           if (room.posBottomLeft.x + room.size.x >= levelSize)
             break;
 
@@ -210,7 +226,7 @@ public class LevelGenerator : MonoBehaviour
           {
             int x = room.posBottomLeft.x + room.size.x;
             CorridorCandidate candidate;
-            candidate.direction = CorridorDirection.Right;
+            candidate.direction = Direction.Right;
             candidate.pos = new Vector2Int(x, y);
             candidate.tiles = new List<Vector2Int>();
             while (x < levelSize)
@@ -225,7 +241,7 @@ public class LevelGenerator : MonoBehaviour
             possibleCorridors.Add(candidate);
           }
           break;
-        case CorridorDirection.Down:
+        case Direction.Down:
           if (room.posBottomLeft.y - 1 < 0)
             break;
 
@@ -233,7 +249,7 @@ public class LevelGenerator : MonoBehaviour
           {
             int y = room.posBottomLeft.y - 1;
             CorridorCandidate candidate;
-            candidate.direction = CorridorDirection.Down;
+            candidate.direction = Direction.Down;
             candidate.pos = new Vector2Int(x, y);
             candidate.tiles = new List<Vector2Int>();
             while (y >= 0)
@@ -248,7 +264,7 @@ public class LevelGenerator : MonoBehaviour
             possibleCorridors.Add(candidate);
           }
           break;
-        case CorridorDirection.Left:
+        case Direction.Left:
           if (room.posBottomLeft.x - 1 < 0)
             break;
 
@@ -256,7 +272,7 @@ public class LevelGenerator : MonoBehaviour
           {
             int x = room.posBottomLeft.x - 1;
             CorridorCandidate candidate;
-            candidate.direction = CorridorDirection.Left;
+            candidate.direction = Direction.Left;
             candidate.pos = new Vector2Int(x, y);
             candidate.tiles = new List<Vector2Int>();
             while (x >= 0)
@@ -488,9 +504,11 @@ public class LevelGenerator : MonoBehaviour
             break;
           case TileType.Wall:
             prefabTile = wallPrefab;
+            reservedTiles[i][j] = true;
             break;
           case TileType.ExitRoomWall:
             prefabTile = exitWallPrefab;
+            reservedTiles[i][j] = true;
             break;
           case TileType.Room:
             prefabTile = roomPrefab;
@@ -520,7 +538,7 @@ public class LevelGenerator : MonoBehaviour
 
         if (prefabObj != null)
         {
-          Vector3 posCenter = new Vector3(i * tileSize + (float)tileSize / 2f, 0, j * tileSize + (float)tileSize / 2f);
+          Vector3 posCenter = new Vector3(i * tileSize + halfTileSize, 0, j * tileSize + halfTileSize);
           Instantiate(prefabObj, posCenter, Quaternion.identity, this.transform);
         }
       }
@@ -531,8 +549,12 @@ public class LevelGenerator : MonoBehaviour
   {
     tileScaleVec = new Vector3((float)tileSize, (float)tileSize, (float)tileSize);
     levelTiles = new Tile[levelSize][];
+    reservedTiles = new bool[levelSize][];
     for (int i = 0; i < levelSize; i++)
+    {
       levelTiles[i] = new Tile[levelSize];
+      reservedTiles[i] = new bool[levelSize];
+    }
 
     for (int j = 0; j < levelSize; j++)
     {
@@ -540,6 +562,7 @@ public class LevelGenerator : MonoBehaviour
       {
         levelTiles[j][k].tileType = TileType.Floor;
         levelTiles[j][k].tileObj = TileObj.Nothing;
+        reservedTiles[j][k] = false;
       }
     }
   }

@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2133721431172930399}
   - component: {fileID: 1848877230084526432}
   - component: {fileID: 9014147660715223766}
-  - component: {fileID: 606940000418053322}
   m_Layer: 0
   m_Name: Tile
   m_TagString: Untagged
@@ -82,20 +81,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &606940000418053322
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6187908401135001742}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &6243778842003243801
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,7 +91,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9165180157147990114}
   m_Layer: 0
-  m_Name: Floor Tile 1
+  m_Name: Room Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

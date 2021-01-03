@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-  private LevelGenerator lvlGenerator;
-
   [SerializeField] [Min(0.01f)] private float movementSpeed = 1f;
   [SerializeField] private float movementDelayInSeconds = 0.25f;
   private WaitForSeconds movementDelay;
@@ -15,24 +13,32 @@ public class PlayerMovement : MonoBehaviour
   [SerializeField] private float turningDelayInSeconds = 0.25f;
   private WaitForSeconds turningDelay;
 
+  private LevelGenerator lvlGenerator;
   private bool isMoving = false;
   private bool isTurning = false;
+  private Vector2Int currentTile;
 
   private void Start()
   {
     lvlGenerator = FindObjectOfType<LevelGenerator>();
+    currentTile = lvlGenerator.Vec3CenterToTile(transform.position);
     movementDelay = new WaitForSeconds(movementDelayInSeconds);
     turningDelay = new WaitForSeconds(turningDelayInSeconds);
+    lvlGenerator.ReserveTile(currentTile);
   }
 
-  private IEnumerator MoveToDestination(Vector3 destination)
+  private IEnumerator MoveToDestinationTile(Vector2Int destinationTile)
   {
     isMoving = true;
-    while (transform.position != destination)
+    lvlGenerator.ReserveTile(destinationTile);
+    Vector3 destVec = lvlGenerator.TileToVec3Center(destinationTile);
+    while (transform.position != destVec)
     {
-      transform.position = Vector3.MoveTowards(transform.position, destination, Time.deltaTime * movementSpeed);
+      transform.position = Vector3.MoveTowards(transform.position, destVec, Time.deltaTime * movementSpeed);
       yield return null;
     }
+    lvlGenerator.FreeTile(currentTile);
+    currentTile = destinationTile;
     yield return movementDelay;
     isMoving = false;
     yield break;
@@ -61,49 +67,41 @@ public class PlayerMovement : MonoBehaviour
 
     if (Input.GetKey(KeyCode.UpArrow))
     {
-      RaycastHit hit;
-      if (Physics.Raycast(transform.position + Vector3.up, transform.forward, out hit, (float)lvlGenerator.TileSize))
-        print(hit.collider.gameObject.name);
-      else
-        StartCoroutine(MoveToDestination(transform.position + transform.forward * lvlGenerator.TileSize));
+      Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
+      Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
+      if (!lvlGenerator.IsTileReserved(destTile))
+        StartCoroutine(MoveToDestinationTile(destTile));
     }
     else if (Input.GetKey(KeyCode.DownArrow))
     {
-      RaycastHit hit;
-      if (Physics.Raycast(transform.position + Vector3.up, -transform.forward, out hit, (float)lvlGenerator.TileSize))
-        print(hit.collider.gameObject.name);
-      else
-        StartCoroutine(MoveToDestination(transform.position - transform.forward * lvlGenerator.TileSize));
+      Vector3 destVector = transform.position - transform.forward * lvlGenerator.TileSize;
+      Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
+      if (!lvlGenerator.IsTileReserved(destTile))
+        StartCoroutine(MoveToDestinationTile(destTile));
     }
     else if (Input.GetKey(KeyCode.X))
     {
       if (Input.GetKey(KeyCode.RightArrow))
       {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position + Vector3.up, transform.right, out hit, (float)lvlGenerator.TileSize))
-          print(hit.collider.gameObject.name);
-        else
-          StartCoroutine(MoveToDestination(transform.position + transform.right * lvlGenerator.TileSize));
+        Vector3 destVector = transform.position + transform.right * lvlGenerator.TileSize;
+        Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
+        if (!lvlGenerator.IsTileReserved(destTile))
+          StartCoroutine(MoveToDestinationTile(destTile));
       }
       else if (Input.GetKey(KeyCode.LeftArrow))
       {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position + Vector3.up, -transform.right, out hit, (float)lvlGenerator.TileSize))
-          print(hit.collider.gameObject.name);
-        else
-          StartCoroutine(MoveToDestination(transform.position + -transform.right * lvlGenerator.TileSize));
+        Vector3 destVector = transform.position + -transform.right * lvlGenerator.TileSize;
+        Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
+        if (!lvlGenerator.IsTileReserved(destTile))
+          StartCoroutine(MoveToDestinationTile(destTile));
       }
     }
     else
     {
       if (Input.GetKey(KeyCode.RightArrow))
-      {
         StartCoroutine(TurnToAngleAroundY(90f));
-      }
       else if (Input.GetKey(KeyCode.LeftArrow))
-      {
         StartCoroutine(TurnToAngleAroundY(-90f));
-      }
     }
   }
 }
