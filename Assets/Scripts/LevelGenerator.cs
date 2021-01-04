@@ -21,7 +21,8 @@ public class LevelGenerator : MonoBehaviour
     Enemy
   }
 
-  private readonly Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>().ToArray();
+  private readonly Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>()
+                                                .Where(x => x != Direction.NONE).ToArray();
 
   private struct Room
   {

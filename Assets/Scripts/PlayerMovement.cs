@@ -13,10 +13,12 @@ public class PlayerMovement : MonoBehaviour
   [SerializeField] private float turningDelayInSeconds = 0.25f;
   private WaitForSeconds turningDelay;
 
+  private Vector2Int currentTile;
+  public Vector2Int Tile { get => currentTile; }
+
   private LevelGenerator lvlGenerator;
   private bool isMoving = false;
   private bool isTurning = false;
-  private Vector2Int currentTile;
 
   private void Start()
   {
