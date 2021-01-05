@@ -134,6 +134,7 @@ MonoBehaviour:
   turningSpeed: 300
   turningDelayInSeconds: 0.1
   nbrIFrames: 120
+  attackCooldownInSeconds: 2
 --- !u!95 &4436258185032481532
 Animator:
   serializedVersion: 3

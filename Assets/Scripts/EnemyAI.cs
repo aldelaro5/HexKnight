@@ -10,8 +10,12 @@ public class EnemyAI : MonoBehaviour
   [SerializeField] [Min(0.01f)] private float movementSpeed = 1f;
   [SerializeField] private int tilesAttackRange = 3;
   [SerializeField] private float idleTimeInSeconds = 5f;
+  [SerializeField] private float attackCooldownInSeconds = 1f;
+  [SerializeField] private int nbrIFrames = 60;
+
+  private Animator animator;
+
   private WaitForSeconds idleDelay;
-  [SerializeField] private float attackTimeInSeconds = 1f;
   private WaitForSeconds attackDelay;
 
   private readonly Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>().ToArray();
@@ -19,23 +23,25 @@ public class EnemyAI : MonoBehaviour
   private Player playerMovement;
   private bool isMoving = false;
   private bool isIdling = false;
+  private bool isTakingDamage = false;
   private Coroutine idlingCoroutine;
   private Vector2Int currentTile;
 
   void Start()
   {
+    animator = GetComponent<Animator>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
     playerMovement = FindObjectOfType<Player>();
     idleDelay = new WaitForSeconds(idleTimeInSeconds);
-    attackDelay = new WaitForSeconds(attackTimeInSeconds);
+    attackDelay = new WaitForSeconds(attackCooldownInSeconds);
     currentTile = lvlGenerator.Vec3CenterToTile(transform.position);
-    lvlGenerator.ReserveTile(currentTile);
+    lvlGenerator.ReserveTileAsEnemy(currentTile, gameObject);
   }
 
   private IEnumerator MoveToDestinationTile(Vector2Int destinationTile)
   {
     isMoving = true;
-    lvlGenerator.ReserveTile(destinationTile);
+    lvlGenerator.ReserveTileAsEnemy(destinationTile, gameObject);
     Vector3 destVec = lvlGenerator.TileToVec3Center(destinationTile);
     while (transform.position != destVec)
     {
@@ -77,7 +83,7 @@ public class EnemyAI : MonoBehaviour
       transform.LookAt(playerMovement.transform);
       if (isIdling)
         return;
-      
+
       AIAttack();
       return;
     }
@@ -114,26 +120,44 @@ public class EnemyAI : MonoBehaviour
   {
     if (currentTile.x < playerMovement.Tile.x)
     {
-      if (!lvlGenerator.IsTileReserved(new Vector2Int(currentTile.x + 1, currentTile.y)))
+      if (lvlGenerator.GetTileInfo(new Vector2Int(currentTile.x + 1, currentTile.y)).state == LevelGenerator.TileState.Free)
         return Direction.Right;
     }
     if (currentTile.x > playerMovement.Tile.x)
     {
-      if (!lvlGenerator.IsTileReserved(new Vector2Int(currentTile.x - 1, currentTile.y)))
+      if (lvlGenerator.GetTileInfo(new Vector2Int(currentTile.x - 1, currentTile.y)).state == LevelGenerator.TileState.Free)
         return Direction.Left;
     }
     if (currentTile.y < playerMovement.Tile.y)
     {
-      if (!lvlGenerator.IsTileReserved(new Vector2Int(currentTile.x, currentTile.y + 1)))
+      if (lvlGenerator.GetTileInfo(new Vector2Int(currentTile.x, currentTile.y + 1)).state == LevelGenerator.TileState.Free)
         return Direction.Up;
     }
     if (currentTile.y > playerMovement.Tile.y)
     {
-      if (!lvlGenerator.IsTileReserved(new Vector2Int(currentTile.x, currentTile.y - 1)))
+      if (lvlGenerator.GetTileInfo(new Vector2Int(currentTile.x, currentTile.y - 1)).state == LevelGenerator.TileState.Free)
         return Direction.Down;
     }
 
     return Direction.NONE;
+  }
+
+  private IEnumerator ReceiveHit()
+  {
+    isTakingDamage = true;
+
+    animator.SetTrigger("TakeDamage");
+    for (int i = 0; i < nbrIFrames; i++)
+      yield return null;
+
+    isTakingDamage = false;
+    yield break;
+  }
+
+  private void GotAttacked()
+  {
+    if (!isTakingDamage)
+      StartCoroutine(ReceiveHit());
   }
 
   private void AIMove(Direction dir, bool lookAt)
@@ -167,7 +191,7 @@ public class EnemyAI : MonoBehaviour
     if (lookAt)
       transform.LookAt(transform.position + vec3Direction);
 
-    if (!lvlGenerator.IsTileReserved(destTile))
+    if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
       StartCoroutine(MoveToDestinationTile(destTile));
     else
       idlingCoroutine = StartCoroutine(Idle());

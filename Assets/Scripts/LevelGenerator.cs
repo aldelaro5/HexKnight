@@ -21,6 +21,20 @@ public class LevelGenerator : MonoBehaviour
     Enemy
   }
 
+  public enum TileState
+  {
+    Free,
+    Blocked,
+    Enemy,
+    Player
+  }
+
+  public struct TileInfo
+  {
+    public TileState state;
+    public GameObject obj;
+  }
+
   private readonly Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>()
                                                 .Where(x => x != Direction.NONE).ToArray();
 
@@ -70,19 +84,34 @@ public class LevelGenerator : MonoBehaviour
   private float halfTileSize;
 
   private Tile[][] levelTiles;
-  private bool[][] reservedTiles;
+  private TileInfo[][] tilesInfo;
 
   public int TileSize { get => tileSize; }
 
-  public bool IsTileReserved(Vector2Int tile) 
+  public TileInfo GetTileInfo(Vector2Int tile)
   {
     if (tile.x < 0 || tile.y < 0 || tile.x >= levelSize || tile.y >= levelSize)
-      return true;
-    return reservedTiles[tile.x][tile.y];
+      return new TileInfo() { state = TileState.Blocked, obj = null };
+    return tilesInfo[tile.x][tile.y];
   }
 
-  public void ReserveTile(Vector2Int tile) => reservedTiles[tile.x][tile.y] = true;
-  public void FreeTile(Vector2Int tile) => reservedTiles[tile.x][tile.y] = false;
+  public void ReserveTileAsEnemy(Vector2Int tile, GameObject enemy)
+  {
+    tilesInfo[tile.x][tile.y].state = TileState.Enemy;
+    tilesInfo[tile.x][tile.y].obj = enemy;
+  }
+
+  public void ReserveTileAsPlayer(Vector2Int tile, GameObject player)
+  {
+    tilesInfo[tile.x][tile.y].state = TileState.Player;
+    tilesInfo[tile.x][tile.y].obj = player;
+  }
+
+  public void FreeTile(Vector2Int tile)
+  {
+    tilesInfo[tile.x][tile.y].state = TileState.Free;
+    tilesInfo[tile.x][tile.y].obj = null;
+  }
 
   public Vector2Int Vec3CenterToTile(Vector3 vec3)
   {
@@ -107,6 +136,7 @@ public class LevelGenerator : MonoBehaviour
     Vector3 startCenter = new Vector3(halfTileSize, 0, halfTileSize);
     GameObject player = Instantiate(playerPrefab, startCenter, Quaternion.identity);
     player.name = "Player";
+    tilesInfo[0][0].obj = player;
   }
 
   private void GenerateEnemies()
@@ -505,11 +535,11 @@ public class LevelGenerator : MonoBehaviour
             break;
           case TileType.Wall:
             prefabTile = wallPrefab;
-            reservedTiles[i][j] = true;
+            tilesInfo[i][j].state = TileState.Blocked;
             break;
           case TileType.ExitRoomWall:
             prefabTile = exitWallPrefab;
-            reservedTiles[i][j] = true;
+            tilesInfo[i][j].state = TileState.Blocked;
             break;
           case TileType.Room:
             prefabTile = roomPrefab;
@@ -524,6 +554,9 @@ public class LevelGenerator : MonoBehaviour
         GameObject objTile = Instantiate(prefabTile, pos, floorPrefab.transform.rotation, this.transform);
         objTile.transform.localScale = tileScaleVec;
         objTile.name = i + ", " + j;
+
+        if (tile == TileType.ExitRoomWall)
+          tilesInfo[i][j].obj = objTile;
 
         TileObj obj = levelTiles[i][j].tileObj;
         GameObject prefabObj = null;
@@ -540,7 +573,8 @@ public class LevelGenerator : MonoBehaviour
         if (prefabObj != null)
         {
           Vector3 posCenter = new Vector3(i * tileSize + halfTileSize, 0, j * tileSize + halfTileSize);
-          Instantiate(prefabObj, posCenter, Quaternion.identity, this.transform);
+          GameObject go = Instantiate(prefabObj, posCenter, Quaternion.identity, this.transform);
+          tilesInfo[i][j].obj = go;
         }
       }
     }
@@ -550,11 +584,11 @@ public class LevelGenerator : MonoBehaviour
   {
     tileScaleVec = new Vector3((float)tileSize, (float)tileSize, (float)tileSize);
     levelTiles = new Tile[levelSize][];
-    reservedTiles = new bool[levelSize][];
+    tilesInfo = new TileInfo[levelSize][];
     for (int i = 0; i < levelSize; i++)
     {
       levelTiles[i] = new Tile[levelSize];
-      reservedTiles[i] = new bool[levelSize];
+      tilesInfo[i] = new TileInfo[levelSize];
     }
 
     for (int j = 0; j < levelSize; j++)
@@ -563,7 +597,8 @@ public class LevelGenerator : MonoBehaviour
       {
         levelTiles[j][k].tileType = TileType.Floor;
         levelTiles[j][k].tileObj = TileObj.Nothing;
-        reservedTiles[j][k] = false;
+        tilesInfo[j][k].state = TileState.Free;
+        tilesInfo[j][k].obj = null;
       }
     }
   }

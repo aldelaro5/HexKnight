@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
   [SerializeField] [Min(0.01f)] private float turningSpeed = 1f;
   [SerializeField] private float turningDelayInSeconds = 0.25f;
   [SerializeField] private int nbrIFrames = 60;
+  [SerializeField] private float attackCooldownInSeconds = 1f;
 
   private WaitForSeconds turningDelay;
   private WaitForSeconds movementDelay;
@@ -23,6 +24,7 @@ public class Player : MonoBehaviour
   private bool isMoving = false;
   private bool isTurning = false;
   private bool isTakingDamage = false;
+  private bool isAttacking = false;
 
   private void Start()
   {
@@ -31,7 +33,7 @@ public class Player : MonoBehaviour
     currentTile = lvlGenerator.Vec3CenterToTile(transform.position);
     movementDelay = new WaitForSeconds(movementDelayInSeconds);
     turningDelay = new WaitForSeconds(turningDelayInSeconds);
-    lvlGenerator.ReserveTile(currentTile);
+    lvlGenerator.ReserveTileAsPlayer(currentTile, gameObject);
   }
 
   private IEnumerator ReceiveHit()
@@ -55,7 +57,7 @@ public class Player : MonoBehaviour
   private IEnumerator MoveToDestinationTile(Vector2Int destinationTile)
   {
     isMoving = true;
-    lvlGenerator.ReserveTile(destinationTile);
+    lvlGenerator.ReserveTileAsPlayer(destinationTile, gameObject);
     Vector3 destVec = lvlGenerator.TileToVec3Center(destinationTile);
     while (transform.position != destVec)
     {
@@ -69,6 +71,15 @@ public class Player : MonoBehaviour
     yield break;
   }
 
+  private IEnumerator Attack(Vector2Int destinationTile)
+  {
+    isAttacking = true;
+    GameObject objEnemy = lvlGenerator.GetTileInfo(destinationTile).obj;
+    objEnemy.SendMessage("GotAttacked");
+    yield return attackCooldownInSeconds;
+    isAttacking = false;
+    yield break;
+  }
 
   private IEnumerator TurnToAngleAroundY(float angle)
   {
@@ -87,21 +98,28 @@ public class Player : MonoBehaviour
 
   private void Update()
   {
-    if (isMoving || isTurning)
+    if (isMoving || isTurning || isAttacking)
       return;
 
-    if (Input.GetKey(KeyCode.UpArrow))
+    if (Input.GetKey(KeyCode.Z))
     {
       Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-      if (!lvlGenerator.IsTileReserved(destTile))
+      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Enemy)
+        StartCoroutine(Attack(destTile));
+    }
+    else if (Input.GetKey(KeyCode.UpArrow))
+    {
+      Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
+      Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
+      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
         StartCoroutine(MoveToDestinationTile(destTile));
     }
     else if (Input.GetKey(KeyCode.DownArrow))
     {
       Vector3 destVector = transform.position - transform.forward * lvlGenerator.TileSize;
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-      if (!lvlGenerator.IsTileReserved(destTile))
+      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
         StartCoroutine(MoveToDestinationTile(destTile));
     }
     else if (Input.GetKey(KeyCode.X))
@@ -110,14 +128,14 @@ public class Player : MonoBehaviour
       {
         Vector3 destVector = transform.position + transform.right * lvlGenerator.TileSize;
         Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-        if (!lvlGenerator.IsTileReserved(destTile))
+        if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
           StartCoroutine(MoveToDestinationTile(destTile));
       }
       else if (Input.GetKey(KeyCode.LeftArrow))
       {
         Vector3 destVector = transform.position + -transform.right * lvlGenerator.TileSize;
         Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-        if (!lvlGenerator.IsTileReserved(destTile))
+        if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
           StartCoroutine(MoveToDestinationTile(destTile));
       }
     }
