@@ -3,30 +3,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour
 {
   [SerializeField] [Min(0.01f)] private float movementSpeed = 1f;
   [SerializeField] private float movementDelayInSeconds = 0.25f;
-  private WaitForSeconds movementDelay;
-
   [SerializeField] [Min(0.01f)] private float turningSpeed = 1f;
   [SerializeField] private float turningDelayInSeconds = 0.25f;
+  [SerializeField] private int nbrIFrames = 60;
+
   private WaitForSeconds turningDelay;
+  private WaitForSeconds movementDelay;
+
 
   private Vector2Int currentTile;
   public Vector2Int Tile { get => currentTile; }
 
   private LevelGenerator lvlGenerator;
+  private Animator animator;
   private bool isMoving = false;
   private bool isTurning = false;
+  private bool isTakingDamage = false;
 
   private void Start()
   {
+    animator = GetComponent<Animator>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
     currentTile = lvlGenerator.Vec3CenterToTile(transform.position);
     movementDelay = new WaitForSeconds(movementDelayInSeconds);
     turningDelay = new WaitForSeconds(turningDelayInSeconds);
     lvlGenerator.ReserveTile(currentTile);
+  }
+
+  private IEnumerator ReceiveHit()
+  {
+    isTakingDamage = true;
+
+    animator.SetTrigger("TakeDamage");
+    for (int i = 0; i < nbrIFrames; i++)
+      yield return null;
+
+    isTakingDamage = false;
+    yield break;
+  }
+
+  public void GotAttacked()
+  {
+    if (!isTakingDamage)
+      StartCoroutine(ReceiveHit());
   }
 
   private IEnumerator MoveToDestinationTile(Vector2Int destinationTile)

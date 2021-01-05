@@ -16,7 +16,7 @@ public class EnemyAI : MonoBehaviour
 
   private readonly Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>().ToArray();
   private LevelGenerator lvlGenerator;
-  private PlayerMovement playerMovement;
+  private Player playerMovement;
   private bool isMoving = false;
   private bool isIdling = false;
   private Coroutine idlingCoroutine;
@@ -25,7 +25,7 @@ public class EnemyAI : MonoBehaviour
   void Start()
   {
     lvlGenerator = FindObjectOfType<LevelGenerator>();
-    playerMovement = FindObjectOfType<PlayerMovement>();
+    playerMovement = FindObjectOfType<Player>();
     idleDelay = new WaitForSeconds(idleTimeInSeconds);
     attackDelay = new WaitForSeconds(attackTimeInSeconds);
     currentTile = lvlGenerator.Vec3CenterToTile(transform.position);
@@ -106,7 +106,7 @@ public class EnemyAI : MonoBehaviour
 
   private void AIAttack()
   {
-    print("bop");
+    playerMovement.GotAttacked();
     idlingCoroutine = StartCoroutine(WaitToAttack());
   }
 
