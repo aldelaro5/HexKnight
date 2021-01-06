@@ -267,6 +267,7 @@ MonoBehaviour:
   corridorPrefab: {fileID: 8435076937535421658, guid: aa8616ee911962045905c0a6f672b489, type: 3}
   enemyPrefab: {fileID: 8600829949028676582, guid: d9620f7c8052770b78095659708d4339, type: 3}
   playerPrefab: {fileID: 4537163831860084823, guid: 65c78d939cfd1d2b899e70a8f37236ea, type: 3}
+  collectiblePrefab: {fileID: 1113497764221088807, guid: b47cb77e3d37e729099a12b04ec2b73e, type: 3}
   levelSize: 10
   tileSize: 3
   prefferedMinNbrRoom: 50
@@ -277,4 +278,4 @@ MonoBehaviour:
   MaxStartRoomSize: {x: 3, y: 3}
   MinEndRoomSize: {x: 2, y: 2}
   MaxEndRoomSize: {x: 2, y: 2}
-  nbrEnemies: 5
+  nbrEnemies: 0

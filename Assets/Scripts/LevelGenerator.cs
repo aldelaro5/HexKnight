@@ -18,13 +18,15 @@ public class LevelGenerator : MonoBehaviour
   private enum TileObj
   {
     Nothing,
-    Enemy
+    Enemy,
+    ExitCollectible
   }
 
   public enum TileState
   {
     Free,
     Blocked,
+    ExitBlocked,
     Enemy,
     Player
   }
@@ -67,6 +69,7 @@ public class LevelGenerator : MonoBehaviour
   [SerializeField] private GameObject corridorPrefab;
   [SerializeField] private GameObject enemyPrefab;
   [SerializeField] private GameObject playerPrefab;
+  [SerializeField] private GameObject collectiblePrefab;
 
   [SerializeField] [Min(6)] private int levelSize = 10;
   [SerializeField] [Min(1)] private int tileSize = 5;
@@ -113,6 +116,23 @@ public class LevelGenerator : MonoBehaviour
     tilesInfo[tile.x][tile.y].obj = null;
   }
 
+  public void UnlockExit()
+  {
+    for (int x = 0; x < levelSize; x++)
+    {
+      for (int y = 0; y < levelSize; y++)
+      {
+        if (tilesInfo[x][y].state == TileState.ExitBlocked)
+        {
+          Vector3 exitPos = tilesInfo[x][y].obj.transform.position;
+          exitPos.y -= tileSize;
+          tilesInfo[x][y].obj.transform.position = exitPos;
+          tilesInfo[x][y].state = TileState.Free;
+        }
+      }
+    }
+  }
+
   public Vector2Int Vec3CenterToTile(Vector3 vec3)
   {
     return new Vector2Int(Mathf.RoundToInt((vec3.x - halfTileSize)) / tileSize,
@@ -131,12 +151,22 @@ public class LevelGenerator : MonoBehaviour
     InitialiseGenerator();
     GenerateRooms();
     GenerateCorridors();
+    GenerateExitCollectible();
     GenerateEnemies();
     GenerateLevelFromTiles();
     Vector3 startCenter = new Vector3(halfTileSize, 0, halfTileSize);
     GameObject player = Instantiate(playerPrefab, startCenter, Quaternion.identity);
     player.name = "Player";
     tilesInfo[0][0].obj = player;
+  }
+
+  private void GenerateExitCollectible()
+  {
+    // Never spawn in the start and end room
+    Room room = rooms[Random.Range(2, rooms.Count)];
+    int xPos = Random.Range(room.posBottomLeft.x, room.posBottomLeft.x + room.size.x);
+    int yPos = Random.Range(room.posBottomLeft.y, room.posBottomLeft.y + room.size.y);
+    levelTiles[xPos][yPos].tileObj = TileObj.ExitCollectible;
   }
 
   private void GenerateEnemies()
@@ -539,16 +569,13 @@ public class LevelGenerator : MonoBehaviour
             break;
           case TileType.ExitRoomWall:
             prefabTile = exitWallPrefab;
-            tilesInfo[i][j].state = TileState.Blocked;
+            tilesInfo[i][j].state = TileState.ExitBlocked;
             break;
           case TileType.Room:
             prefabTile = roomPrefab;
             break;
           case TileType.Corridor:
             prefabTile = corridorPrefab;
-            break;
-          default:
-            Debug.LogError("Unhandled tile type " + tile.ToString());
             break;
         }
         GameObject objTile = Instantiate(prefabTile, pos, floorPrefab.transform.rotation, this.transform);
@@ -565,8 +592,10 @@ public class LevelGenerator : MonoBehaviour
           case TileObj.Enemy:
             prefabObj = enemyPrefab;
             break;
+          case TileObj.ExitCollectible:
+            prefabObj = collectiblePrefab;
+            break;
           case TileObj.Nothing:
-          default:
             break;
         }
 
