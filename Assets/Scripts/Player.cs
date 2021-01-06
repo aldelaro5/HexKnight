@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
   [SerializeField] private float turningDelayInSeconds = 0.25f;
   [SerializeField] private int nbrIFrames = 60;
   [SerializeField] private float attackCooldownInSeconds = 1f;
+  [SerializeField] private int hp = 5;
 
   private WaitForSeconds turningDelay;
   private WaitForSeconds movementDelay;
@@ -36,22 +37,35 @@ public class Player : MonoBehaviour
     lvlGenerator.ReserveTileAsPlayer(currentTile, gameObject);
   }
 
-  private IEnumerator ReceiveHit()
+  private void Die()
+  {
+    Destroy(gameObject);
+  }
+
+  private IEnumerator ReceiveHit(int dmg)
   {
     isTakingDamage = true;
 
     animator.SetTrigger("TakeDamage");
-    for (int i = 0; i < nbrIFrames; i++)
-      yield return null;
+    hp -= dmg;
+    if (hp <= 0)
+    {
+      Die();
+    }
+    else
+    {
+      for (int i = 0; i < nbrIFrames; i++)
+        yield return null;
 
-    isTakingDamage = false;
+      isTakingDamage = false;
+    }
     yield break;
   }
 
-  public void GotAttacked()
+  public void GotAttacked(int dmg)
   {
     if (!isTakingDamage)
-      StartCoroutine(ReceiveHit());
+      StartCoroutine(ReceiveHit(dmg));
   }
 
   private IEnumerator MoveToDestinationTile(Vector2Int destinationTile)
@@ -75,7 +89,7 @@ public class Player : MonoBehaviour
   {
     isAttacking = true;
     GameObject objEnemy = lvlGenerator.GetTileInfo(destinationTile).obj;
-    objEnemy.SendMessage("GotAttacked");
+    objEnemy.SendMessage("GotAttacked", 1);
     yield return attackCooldownInSeconds;
     isAttacking = false;
     yield break;

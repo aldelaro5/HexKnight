@@ -12,6 +12,7 @@ public class EnemyAI : MonoBehaviour
   [SerializeField] private float idleTimeInSeconds = 5f;
   [SerializeField] private float attackCooldownInSeconds = 1f;
   [SerializeField] private int nbrIFrames = 60;
+  [SerializeField] private int hp = 2;
 
   private Animator animator;
 
@@ -112,7 +113,7 @@ public class EnemyAI : MonoBehaviour
 
   private void AIAttack()
   {
-    playerMovement.GotAttacked();
+    playerMovement.GotAttacked(1);
     idlingCoroutine = StartCoroutine(WaitToAttack());
   }
 
@@ -142,22 +143,36 @@ public class EnemyAI : MonoBehaviour
     return Direction.NONE;
   }
 
-  private IEnumerator ReceiveHit()
+  private IEnumerator ReceiveHit(int dmg)
   {
     isTakingDamage = true;
 
     animator.SetTrigger("TakeDamage");
-    for (int i = 0; i < nbrIFrames; i++)
-      yield return null;
+    hp -= dmg;
+    if (hp <= 0)
+    {
+      Die();
+    }
+    else
+    {
+      for (int i = 0; i < nbrIFrames; i++)
+        yield return null;
 
-    isTakingDamage = false;
+      isTakingDamage = false;
+    }
     yield break;
   }
 
-  private void GotAttacked()
+  private void Die()
+  {
+    Destroy(gameObject);
+    lvlGenerator.FreeTile(currentTile);
+  }
+
+  private void GotAttacked(int dmg)
   {
     if (!isTakingDamage)
-      StartCoroutine(ReceiveHit());
+      StartCoroutine(ReceiveHit(dmg));
   }
 
   private void AIMove(Direction dir, bool lookAt)
