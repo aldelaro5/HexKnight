@@ -59,7 +59,7 @@ public class LevelGenerator : MonoBehaviour
     public TileObj tileObj;
   }
 
-  private List<Room> rooms = new List<Room>();
+  [SerializeField] private LevelGeneratorParams levelParams;
 
   [SerializeField] private GameObject floorPrefab;
   [SerializeField] private GameObject wallPrefab;
@@ -71,29 +71,21 @@ public class LevelGenerator : MonoBehaviour
   [SerializeField] private GameObject playerPrefab;
   [SerializeField] private GameObject collectiblePrefab;
 
-  [SerializeField] [Min(6)] private int levelSize = 10;
-  [SerializeField] [Min(1)] private int tileSize = 5;
-  [SerializeField] private int prefferedMinNbrRoom = 1;
-  [SerializeField] private int maxNbrRoom = 5;
-  [SerializeField] private Vector2Int MinRoomSize;
-  [SerializeField] private Vector2Int MaxRoomSize;
-  [SerializeField] private Vector2Int MinStartRoomSize;
-  [SerializeField] private Vector2Int MaxStartRoomSize;
-  [SerializeField] private Vector2Int MinEndRoomSize;
-  [SerializeField] private Vector2Int MaxEndRoomSize;
-  [SerializeField] private int nbrEnemies = 3;
+  private GameObject player = null;
+  private GameManager game;
 
   private Vector3 tileScaleVec;
   private float halfTileSize;
 
+  private List<Room> rooms = new List<Room>();
   private Tile[][] levelTiles;
   private TileInfo[][] tilesInfo;
 
-  public int TileSize { get => tileSize; }
+  public int TileSize { get => levelParams.tileSize; }
 
   public TileInfo GetTileInfo(Vector2Int tile)
   {
-    if (tile.x < 0 || tile.y < 0 || tile.x >= levelSize || tile.y >= levelSize)
+    if (tile.x < 0 || tile.y < 0 || tile.x >= levelParams.levelSize || tile.y >= levelParams.levelSize)
       return new TileInfo() { state = TileState.Blocked, obj = null };
     return tilesInfo[tile.x][tile.y];
   }
@@ -116,16 +108,21 @@ public class LevelGenerator : MonoBehaviour
     tilesInfo[tile.x][tile.y].obj = null;
   }
 
+  public bool IsTileExitTile(Vector2Int tile)
+  {
+    return tile.x == levelParams.levelSize && tile.y == levelParams.levelSize - 1;
+  }
+
   public void UnlockExit()
   {
-    for (int x = 0; x < levelSize; x++)
+    for (int x = 0; x < levelParams.levelSize; x++)
     {
-      for (int y = 0; y < levelSize; y++)
+      for (int y = 0; y < levelParams.levelSize; y++)
       {
         if (tilesInfo[x][y].state == TileState.ExitBlocked)
         {
           Vector3 exitPos = tilesInfo[x][y].obj.transform.position;
-          exitPos.y -= tileSize;
+          exitPos.y -= levelParams.tileSize;
           tilesInfo[x][y].obj.transform.position = exitPos;
           tilesInfo[x][y].state = TileState.Free;
         }
@@ -133,34 +130,69 @@ public class LevelGenerator : MonoBehaviour
     }
   }
 
+  public void ExitReached()
+  {
+    game.GoToNextLevel();
+  }
+
   public Vector2Int Vec3CenterToTile(Vector3 vec3)
   {
-    return new Vector2Int(Mathf.RoundToInt((vec3.x - halfTileSize)) / tileSize,
-                          Mathf.RoundToInt((vec3.z - halfTileSize)) / tileSize);
+    return new Vector2Int(Mathf.RoundToInt((vec3.x - halfTileSize)) / levelParams.tileSize,
+                          Mathf.RoundToInt((vec3.z - halfTileSize)) / levelParams.tileSize);
   }
 
   public Vector3 TileToVec3Center(Vector2Int tile)
   {
-    return new Vector3((float)tile.x * (float)tileSize + halfTileSize, 0,
-                       (float)tile.y * (float)tileSize + halfTileSize);
+    return new Vector3((float)tile.x * (float)levelParams.tileSize + halfTileSize, 0,
+                       (float)tile.y * (float)levelParams.tileSize + halfTileSize);
   }
 
   private void Start()
   {
-    halfTileSize = (float)tileSize / 2f;
+    game = FindObjectOfType<GameManager>();
+    // If we are debugging the generator
+    if (game == null && Application.isEditor)
+    {
+      GenerateLevel(levelParams);
+    }
+  }
+
+  public void GenerateLevel(LevelGeneratorParams genParams)
+  {
+    if (game == null)
+      game = FindObjectOfType<GameManager>();
+    
+    levelParams = genParams;
+    halfTileSize = (float)levelParams.tileSize / 2f;
     InitialiseGenerator();
     GenerateRooms();
     GenerateCorridors();
-    GenerateExitCollectible();
+    GenerateExitUnlocker();
     GenerateEnemies();
     GenerateLevelFromTiles();
-    Vector3 startCenter = new Vector3(halfTileSize, 0, halfTileSize);
-    GameObject player = Instantiate(playerPrefab, startCenter, Quaternion.identity);
-    player.name = "Player";
-    tilesInfo[0][0].obj = player;
+    SetupPlayer();
   }
 
-  private void GenerateExitCollectible()
+  private void SetupPlayer()
+  {
+    Vector3 startCenter = new Vector3(halfTileSize, 0, halfTileSize);
+    if (player == null)
+    {
+      if (game != null)
+        player = Instantiate(playerPrefab, startCenter, Quaternion.identity, game.transform);
+      else
+        player = Instantiate(playerPrefab, startCenter, Quaternion.identity);
+      player.name = "Player";
+    }
+    else
+    {
+      player.transform.position = startCenter;
+      Player playerComponent = player.GetComponent<Player>();
+      playerComponent.ResetTile();
+    }
+  }
+
+  private void GenerateExitUnlocker()
   {
     // Never spawn in the start and end room
     Room room = rooms[Random.Range(2, rooms.Count)];
@@ -171,7 +203,7 @@ public class LevelGenerator : MonoBehaviour
 
   private void GenerateEnemies()
   {
-    for (int i = 0; i < nbrEnemies; i++)
+    for (int i = 0; i < levelParams.nbrEnemies; i++)
     {
       if (!IsAnyTileInRoomsFree())
         break;
@@ -257,7 +289,7 @@ public class LevelGenerator : MonoBehaviour
       switch (direction)
       {
         case Direction.Up:
-          if (room.posBottomLeft.y + room.size.y > levelSize)
+          if (room.posBottomLeft.y + room.size.y > levelParams.levelSize)
             break;
 
           for (int x = room.posBottomLeft.x; x < room.posBottomLeft.x + room.size.x; x++)
@@ -267,7 +299,7 @@ public class LevelGenerator : MonoBehaviour
             candidate.direction = Direction.Up;
             candidate.pos = new Vector2Int(x, y);
             candidate.tiles = new List<Vector2Int>();
-            while (y < levelSize)
+            while (y < levelParams.levelSize)
             {
               if (CanTileBeACorridor(x, y))
                 candidate.tiles.Add(new Vector2Int(x, y));
@@ -280,7 +312,7 @@ public class LevelGenerator : MonoBehaviour
           }
           break;
         case Direction.Right:
-          if (room.posBottomLeft.x + room.size.x >= levelSize)
+          if (room.posBottomLeft.x + room.size.x >= levelParams.levelSize)
             break;
 
           for (int y = room.posBottomLeft.y; y < room.posBottomLeft.y + room.size.y; y++)
@@ -290,7 +322,7 @@ public class LevelGenerator : MonoBehaviour
             candidate.direction = Direction.Right;
             candidate.pos = new Vector2Int(x, y);
             candidate.tiles = new List<Vector2Int>();
-            while (x < levelSize)
+            while (x < levelParams.levelSize)
             {
               if (CanTileBeACorridor(x, y))
                 candidate.tiles.Add(new Vector2Int(x, y));
@@ -359,23 +391,23 @@ public class LevelGenerator : MonoBehaviour
   private void GenerateRooms()
   {
     GenerateStartAndEndRoom();
-    int targetNbrRoom = Random.Range(prefferedMinNbrRoom, maxNbrRoom + 1);
+    int targetNbrRoom = Random.Range(levelParams.prefferedMinNbrRoom, levelParams.maxNbrRoom + 1);
     int nbrRoomGenerated = 0;
     bool freeRoomKnownToExists = false;
     while (nbrRoomGenerated < targetNbrRoom)
     {
       if (!freeRoomKnownToExists)
       {
-        if (!CanAllocateRoomOfSize(MinRoomSize.x, MinRoomSize.y))
+        if (!CanAllocateRoomOfSize(levelParams.MinRoomSize.x, levelParams.MinRoomSize.y))
           break;
         else
           freeRoomKnownToExists = true;
       }
 
-      int sizeX = Random.Range(MinRoomSize.x, MaxRoomSize.x + 1);
-      int sizeY = Random.Range(MinRoomSize.y, MaxRoomSize.y + 1);
-      int posBottomLeftX = Random.Range(0, levelSize - (sizeX - 1));
-      int posBottomLeftY = Random.Range(0, levelSize - (sizeY - 1));
+      int sizeX = Random.Range(levelParams.MinRoomSize.x, levelParams.MaxRoomSize.x + 1);
+      int sizeY = Random.Range(levelParams.MinRoomSize.y, levelParams.MaxRoomSize.y + 1);
+      int posBottomLeftX = Random.Range(0, levelParams.levelSize - (sizeX - 1));
+      int posBottomLeftY = Random.Range(0, levelParams.levelSize - (sizeY - 1));
 
       if (!IsRoomValid(sizeX, sizeY, posBottomLeftX, posBottomLeftY))
         continue;
@@ -384,7 +416,7 @@ public class LevelGenerator : MonoBehaviour
       {
         for (int y = 0; y < sizeY; y++)
         {
-          if (x + posBottomLeftX >= levelSize || y + posBottomLeftY >= levelSize)
+          if (x + posBottomLeftX >= levelParams.levelSize || y + posBottomLeftY >= levelParams.levelSize)
             continue;
 
           levelTiles[x + posBottomLeftX][y + posBottomLeftY].tileType = TileType.Room;
@@ -406,8 +438,8 @@ public class LevelGenerator : MonoBehaviour
 
   private void GenerateStartAndEndRoom()
   {
-    int sizeStartX = Random.Range(MinStartRoomSize.x, MaxStartRoomSize.x + 1);
-    int sizeStartY = Random.Range(MinStartRoomSize.y, MaxStartRoomSize.y + 1);
+    int sizeStartX = Random.Range(levelParams.MinStartRoomSize.x, levelParams.MaxStartRoomSize.x + 1);
+    int sizeStartY = Random.Range(levelParams.MinStartRoomSize.y, levelParams.MaxStartRoomSize.y + 1);
     for (int x = 0; x < sizeStartX; x++)
     {
       for (int y = 0; y < sizeStartY; y++)
@@ -421,10 +453,10 @@ public class LevelGenerator : MonoBehaviour
     };
     rooms.Add(startRoom);
 
-    int sizeEndX = Random.Range(MinEndRoomSize.x, MaxEndRoomSize.x + 1);
-    int sizeEndY = Random.Range(MinEndRoomSize.y, MaxEndRoomSize.y + 1);
-    int posXEnd = levelSize - sizeEndX;
-    int posYEnd = levelSize - sizeEndY;
+    int sizeEndX = Random.Range(levelParams.MinEndRoomSize.x, levelParams.MaxEndRoomSize.x + 1);
+    int sizeEndY = Random.Range(levelParams.MinEndRoomSize.y, levelParams.MaxEndRoomSize.y + 1);
+    int posXEnd = levelParams.levelSize - sizeEndX;
+    int posYEnd = levelParams.levelSize - sizeEndY;
     for (int x = posXEnd; x < posXEnd + sizeEndX; x++)
     {
       for (int y = posYEnd; y < posYEnd + sizeEndY; y++)
@@ -453,7 +485,7 @@ public class LevelGenerator : MonoBehaviour
           levelTiles[posBottomLeftX - 1][rowPos].tileType = wallType;
       }
 
-      if (posBottomLeftX + sizeX < levelSize)
+      if (posBottomLeftX + sizeX < levelParams.levelSize)
       {
         if (levelTiles[posBottomLeftX + sizeX][rowPos].tileType != TileType.ExitRoomWall)
           levelTiles[posBottomLeftX + sizeX][rowPos].tileType = wallType;
@@ -469,7 +501,7 @@ public class LevelGenerator : MonoBehaviour
           levelTiles[columnPos][posBottomLeftY - 1].tileType = wallType;
       }
 
-      if (posBottomLeftY + sizeY < levelSize)
+      if (posBottomLeftY + sizeY < levelParams.levelSize)
       {
         if (levelTiles[columnPos][posBottomLeftY + sizeY].tileType != TileType.ExitRoomWall)
           levelTiles[columnPos][posBottomLeftY + sizeY].tileType = wallType;
@@ -480,9 +512,9 @@ public class LevelGenerator : MonoBehaviour
   private bool CanAllocateRoomOfSize(int sizeX, int sizeY)
   {
     var listFreeRoomPos = new List<Vector2Int>();
-    for (int x = 0; x < levelSize - (sizeX - 1); x++)
+    for (int x = 0; x < levelParams.levelSize - (sizeX - 1); x++)
     {
-      for (int y = 0; y < levelSize - (sizeY - 1); y++)
+      for (int y = 0; y < levelParams.levelSize - (sizeY - 1); y++)
       {
         if (levelTiles[x][y].tileType == TileType.Floor)
           listFreeRoomPos.Add(new Vector2Int(x, y));
@@ -500,16 +532,16 @@ public class LevelGenerator : MonoBehaviour
 
   private bool IsRoomValid(int sizeX, int sizeY, int posBottomLeftX, int posBottomLeftY)
   {
-    if (posBottomLeftX >= levelSize - (sizeX - 1))
+    if (posBottomLeftX >= levelParams.levelSize - (sizeX - 1))
       return false;
-    if (posBottomLeftY >= levelSize - (sizeY - 1))
+    if (posBottomLeftY >= levelParams.levelSize - (sizeY - 1))
       return false;
 
     for (int x = 0; x < sizeX; x++)
     {
       for (int y = 0; y < sizeY; y++)
       {
-        if (x + posBottomLeftX >= levelSize || y + posBottomLeftY >= levelSize)
+        if (x + posBottomLeftX >= levelParams.levelSize || y + posBottomLeftY >= levelParams.levelSize)
           continue;
 
         if (!CanTileBeInARoom(x + posBottomLeftX, y + posBottomLeftY))
@@ -528,34 +560,34 @@ public class LevelGenerator : MonoBehaviour
 
   private void GenerateLevelFromTiles()
   {
-    for (int edgeIndex = -1; edgeIndex <= levelSize; edgeIndex++)
+    for (int edgeIndex = -1; edgeIndex <= levelParams.levelSize; edgeIndex++)
     {
-      Vector3 posToptEdge = new Vector3(edgeIndex * tileSize, 0, levelSize * tileSize);
+      Vector3 posToptEdge = new Vector3(edgeIndex * levelParams.tileSize, 0, levelParams.levelSize * levelParams.tileSize);
       GameObject tileTopEdge = Instantiate(borderWallPrefab, posToptEdge, Quaternion.identity, this.transform);
       tileTopEdge.transform.localScale = tileScaleVec;
-      tileTopEdge.name = (int)posToptEdge.x / tileSize + ", " + (int)posToptEdge.z / tileSize;
+      tileTopEdge.name = (int)posToptEdge.x / levelParams.tileSize + ", " + (int)posToptEdge.z / levelParams.tileSize;
 
-      Vector3 posBottomEdge = new Vector3(edgeIndex * tileSize, 0, -tileSize);
+      Vector3 posBottomEdge = new Vector3(edgeIndex * levelParams.tileSize, 0, -levelParams.tileSize);
       GameObject tileBottomEdge = Instantiate(borderWallPrefab, posBottomEdge, Quaternion.identity, this.transform);
       tileBottomEdge.transform.localScale = tileScaleVec;
-      tileBottomEdge.name = (int)posBottomEdge.x / tileSize + ", " + (int)posBottomEdge.z / tileSize;
+      tileBottomEdge.name = (int)posBottomEdge.x / levelParams.tileSize + ", " + (int)posBottomEdge.z / levelParams.tileSize;
     }
 
-    for (int i = 0; i < levelSize; i++)
+    for (int i = 0; i < levelParams.levelSize; i++)
     {
-      Vector3 posLeftEdge = new Vector3(-tileSize, 0, i * tileSize);
+      Vector3 posLeftEdge = new Vector3(-levelParams.tileSize, 0, i * levelParams.tileSize);
       GameObject tileLeftEdge = Instantiate(borderWallPrefab, posLeftEdge, Quaternion.identity, this.transform);
       tileLeftEdge.transform.localScale = tileScaleVec;
-      tileLeftEdge.name = (int)posLeftEdge.x / tileSize + ", " + (int)posLeftEdge.z / tileSize;
+      tileLeftEdge.name = (int)posLeftEdge.x / levelParams.tileSize + ", " + (int)posLeftEdge.z / levelParams.tileSize;
 
-      Vector3 posRightEdge = new Vector3(levelSize * tileSize, 0, i * tileSize);
+      Vector3 posRightEdge = new Vector3(levelParams.levelSize * levelParams.tileSize, 0, i * levelParams.tileSize);
       GameObject tileRightEdge = Instantiate(borderWallPrefab, posRightEdge, Quaternion.identity, this.transform);
       tileRightEdge.transform.localScale = tileScaleVec;
-      tileRightEdge.name = (int)posRightEdge.x / tileSize + ", " + (int)posRightEdge.z / tileSize;
+      tileRightEdge.name = (int)posRightEdge.x / levelParams.tileSize + ", " + (int)posRightEdge.z / levelParams.tileSize;
 
-      for (int j = 0; j < levelSize; j++)
+      for (int j = 0; j < levelParams.levelSize; j++)
       {
-        Vector3 pos = new Vector3(i * tileSize, 0, j * tileSize);
+        Vector3 pos = new Vector3(i * levelParams.tileSize, 0, j * levelParams.tileSize);
         TileType tile = levelTiles[i][j].tileType;
         GameObject prefabTile = null;
         switch (tile)
@@ -601,7 +633,7 @@ public class LevelGenerator : MonoBehaviour
 
         if (prefabObj != null)
         {
-          Vector3 posCenter = new Vector3(i * tileSize + halfTileSize, 0, j * tileSize + halfTileSize);
+          Vector3 posCenter = new Vector3(i * levelParams.tileSize + halfTileSize, 0, j * levelParams.tileSize + halfTileSize);
           GameObject go = Instantiate(prefabObj, posCenter, Quaternion.identity, this.transform);
           tilesInfo[i][j].obj = go;
         }
@@ -611,18 +643,19 @@ public class LevelGenerator : MonoBehaviour
 
   private void InitialiseGenerator()
   {
-    tileScaleVec = new Vector3((float)tileSize, (float)tileSize, (float)tileSize);
-    levelTiles = new Tile[levelSize][];
-    tilesInfo = new TileInfo[levelSize][];
-    for (int i = 0; i < levelSize; i++)
+    tileScaleVec = new Vector3((float)levelParams.tileSize, (float)levelParams.tileSize, (float)levelParams.tileSize);
+    levelTiles = new Tile[levelParams.levelSize][];
+    tilesInfo = new TileInfo[levelParams.levelSize][];
+    rooms.Clear();
+    for (int i = 0; i < levelParams.levelSize; i++)
     {
-      levelTiles[i] = new Tile[levelSize];
-      tilesInfo[i] = new TileInfo[levelSize];
+      levelTiles[i] = new Tile[levelParams.levelSize];
+      tilesInfo[i] = new TileInfo[levelParams.levelSize];
     }
 
-    for (int j = 0; j < levelSize; j++)
+    for (int j = 0; j < levelParams.levelSize; j++)
     {
-      for (int k = 0; k < levelSize; k++)
+      for (int k = 0; k < levelParams.levelSize; k++)
       {
         levelTiles[j][k].tileType = TileType.Floor;
         levelTiles[j][k].tileObj = TileObj.Nothing;

@@ -31,9 +31,14 @@ public class Player : MonoBehaviour
   {
     animator = GetComponent<Animator>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
-    currentTile = lvlGenerator.Vec3CenterToTile(transform.position);
     movementDelay = new WaitForSeconds(movementDelayInSeconds);
     turningDelay = new WaitForSeconds(turningDelayInSeconds);
+    ResetTile();
+  }
+
+  public void ResetTile()
+  {
+    currentTile = lvlGenerator.Vec3CenterToTile(transform.position);
     lvlGenerator.ReserveTileAsPlayer(currentTile, gameObject);
   }
 
@@ -71,16 +76,25 @@ public class Player : MonoBehaviour
   private IEnumerator MoveToDestinationTile(Vector2Int destinationTile)
   {
     isMoving = true;
-    lvlGenerator.ReserveTileAsPlayer(destinationTile, gameObject);
+    bool toExit = lvlGenerator.IsTileExitTile(destinationTile);
+    if (!toExit)
+      lvlGenerator.ReserveTileAsPlayer(destinationTile, gameObject);
+
     Vector3 destVec = lvlGenerator.TileToVec3Center(destinationTile);
     while (transform.position != destVec)
     {
       transform.position = Vector3.MoveTowards(transform.position, destVec, Time.deltaTime * movementSpeed);
       yield return null;
     }
-    lvlGenerator.FreeTile(currentTile);
+
+    if (!toExit)
+      lvlGenerator.FreeTile(currentTile);
     currentTile = destinationTile;
     yield return movementDelay;
+    if (toExit)
+    {
+      lvlGenerator.ExitReached();
+    }
     isMoving = false;
     yield break;
   }
@@ -126,7 +140,8 @@ public class Player : MonoBehaviour
     {
       Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
+      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free ||
+          lvlGenerator.IsTileExitTile(destTile))
         StartCoroutine(MoveToDestinationTile(destTile));
     }
     else if (Input.GetKey(KeyCode.DownArrow))
