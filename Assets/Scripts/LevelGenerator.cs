@@ -132,6 +132,7 @@ public class LevelGenerator : MonoBehaviour
 
   public void ExitReached()
   {
+    // If we are debugging the generator, just reload
     if (game == null && Application.isEditor)
     {
       foreach (Transform item in gameObject.transform)

@@ -7,6 +7,8 @@ using Random = UnityEngine.Random;
 
 public class EnemyAI : MonoBehaviour
 {
+  [SerializeField] ParticleSystem deathVFX;
+  [SerializeField] MeshRenderer MainMesh;
   [SerializeField] [Min(0.01f)] private float movementSpeed = 1f;
   [SerializeField] private int tilesAttackRange = 3;
   [SerializeField] private float idleTimeInSeconds = 5f;
@@ -165,7 +167,9 @@ public class EnemyAI : MonoBehaviour
 
   private void Die()
   {
-    Destroy(gameObject);
+    Destroy(MainMesh);
+    deathVFX.Play();
+    Destroy(gameObject, deathVFX.main.duration);
     lvlGenerator.FreeTile(currentTile);
   }
 
