@@ -35,6 +35,7 @@ public class LevelGenerator : MonoBehaviour
   {
     public TileState state;
     public GameObject obj;
+    public bool enemiesForbidden;
   }
 
   private readonly Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>()
@@ -637,6 +638,7 @@ public class LevelGenerator : MonoBehaviour
             break;
           case TileObj.ExitCollectible:
             prefabObj = collectiblePrefab;
+            tilesInfo[i][j].enemiesForbidden = true;
             break;
           case TileObj.Nothing:
             break;
@@ -672,6 +674,7 @@ public class LevelGenerator : MonoBehaviour
         levelTiles[j][k].tileObj = TileObj.Nothing;
         tilesInfo[j][k].state = TileState.Free;
         tilesInfo[j][k].obj = null;
+        tilesInfo[j][k].enemiesForbidden = false;
       }
     }
   }
