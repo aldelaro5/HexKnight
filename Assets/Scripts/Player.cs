@@ -102,9 +102,15 @@ public class Player : MonoBehaviour
   private IEnumerator Attack(Vector2Int destinationTile)
   {
     isAttacking = true;
-    GameObject objEnemy = lvlGenerator.GetTileInfo(destinationTile).obj;
-    objEnemy.SendMessage("GotAttacked", 1);
-    yield return attackCooldownInSeconds;
+    if (lvlGenerator.GetTileInfo(destinationTile).state == LevelGenerator.TileState.Enemy)
+    {
+      GameObject objEnemy = lvlGenerator.GetTileInfo(destinationTile).obj;
+      objEnemy.SendMessage("GotAttacked", 1);
+    }
+    else
+    {
+      yield return attackCooldownInSeconds;
+    }
     isAttacking = false;
     yield break;
   }
@@ -133,8 +139,7 @@ public class Player : MonoBehaviour
     {
       Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Enemy)
-        StartCoroutine(Attack(destTile));
+      StartCoroutine(Attack(destTile));
     }
     else if (Input.GetKey(KeyCode.UpArrow))
     {

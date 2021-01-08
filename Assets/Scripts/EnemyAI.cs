@@ -82,7 +82,7 @@ public class EnemyAI : MonoBehaviour
         Math.Abs(currentTile.y - playerMovement.Tile.y) == 1)
     {
       transform.LookAt(playerMovement.transform);
-      if (isIdling)
+      if (isIdling || isTakingDamage)
         return;
 
       AIAttack();

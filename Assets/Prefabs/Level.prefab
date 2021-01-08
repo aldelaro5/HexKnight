@@ -46,14 +46,14 @@ MonoBehaviour:
   levelParams:
     levelSize: 10
     tileSize: 5
-    prefferedMinNbrRoom: 1
+    prefferedMinNbrRoom: 5
     maxNbrRoom: 5
-    MinRoomSize: {x: 0, y: 0}
-    MaxRoomSize: {x: 0, y: 0}
-    MinStartRoomSize: {x: 0, y: 0}
-    MaxStartRoomSize: {x: 0, y: 0}
-    MinEndRoomSize: {x: 0, y: 0}
-    MaxEndRoomSize: {x: 0, y: 0}
+    MinRoomSize: {x: 2, y: 2}
+    MaxRoomSize: {x: 2, y: 2}
+    MinStartRoomSize: {x: 2, y: 2}
+    MaxStartRoomSize: {x: 2, y: 2}
+    MinEndRoomSize: {x: 2, y: 2}
+    MaxEndRoomSize: {x: 2, y: 2}
     nbrEnemies: 3
   floorPrefab: {fileID: 6243778842003243801, guid: e799c66afb358f11fbe4fb7f7595928e, type: 3}
   wallPrefab: {fileID: 6819998979313002283, guid: 9cd8866c5f5cc491fb14c8e6525d3676, type: 3}

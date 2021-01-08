@@ -212,7 +212,7 @@ MonoBehaviour:
   tilesAttackRange: 3
   idleTimeInSeconds: 2
   attackCooldownInSeconds: 2
-  nbrIFrames: 120
+  nbrIFrames: 60
   hp: 2
 --- !u!95 &8908503446021196653
 Animator:

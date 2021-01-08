@@ -132,7 +132,17 @@ public class LevelGenerator : MonoBehaviour
 
   public void ExitReached()
   {
-    game.GoToNextLevel();
+    if (game == null && Application.isEditor)
+    {
+      foreach (Transform item in gameObject.transform)
+        Destroy(item.gameObject);
+
+      GenerateLevel(levelParams);
+    }
+    else
+    {
+      game.GoToNextLevel();
+    }
   }
 
   public Vector2Int Vec3CenterToTile(Vector3 vec3)
@@ -161,7 +171,7 @@ public class LevelGenerator : MonoBehaviour
   {
     if (game == null)
       game = FindObjectOfType<GameManager>();
-    
+
     levelParams = genParams;
     halfTileSize = (float)levelParams.tileSize / 2f;
     InitialiseGenerator();

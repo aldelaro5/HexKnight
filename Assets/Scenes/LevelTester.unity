@@ -223,6 +223,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
+      propertyPath: levelParams.tileSize
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
+      propertyPath: levelParams.maxNbrRoom
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
+      propertyPath: levelParams.prefferedMinNbrRoom
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3736194495924249748, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: m_RootOrder
       value: 1
