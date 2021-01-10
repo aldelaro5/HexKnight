@@ -60,8 +60,13 @@ public class LevelGenerator : MonoBehaviour
     public TileObj tileObj;
   }
 
+  private readonly float[] tileRotations = new float[] { 0, 90, 180, 270 };
+
   [SerializeField] private LevelGeneratorParams levelParams;
 
+  [SerializeField] private Material floorMaterial;
+  [SerializeField] private Material corridorMaterial;
+  [SerializeField] private Material roomMaterial;
   [SerializeField] private GameObject floorPrefab;
   [SerializeField] private GameObject wallPrefab;
   [SerializeField] private GameObject exitWallPrefab;
@@ -169,10 +174,26 @@ public class LevelGenerator : MonoBehaviour
     }
   }
 
+  private void InitialiseFloorMaterial()
+  {
+    int nbrFloorTextures = ((Texture2DArray)floorMaterial.GetTexture("_Textures")).depth;
+    floorMaterial.SetInt("_NbrTextures", nbrFloorTextures);
+    int nbrCorridorTextures = ((Texture2DArray)corridorMaterial.GetTexture("_Textures")).depth;
+    corridorMaterial.SetInt("_NbrTextures", nbrCorridorTextures);
+    int nbrRoomTextures = ((Texture2DArray)roomMaterial.GetTexture("_Textures")).depth;
+    roomMaterial.SetInt("_NbrTextures", nbrRoomTextures);
+
+    floorMaterial.SetFloat("_Seed", Random.value);
+    corridorMaterial.SetFloat("_Seed", Random.value);
+    roomMaterial.SetFloat("_Seed", Random.value);
+  }
+
   public void GenerateLevel(LevelGeneratorParams genParams)
   {
     if (game == null)
       game = FindObjectOfType<GameManager>();
+
+    InitialiseFloorMaterial();
 
     levelParams = genParams;
     halfTileSize = (float)levelParams.tileSize / 2f;
@@ -602,10 +623,12 @@ public class LevelGenerator : MonoBehaviour
         Vector3 pos = new Vector3(i * levelParams.tileSize, 0, j * levelParams.tileSize);
         TileType tile = levelTiles[i][j].tileType;
         GameObject prefabTile = null;
+        bool randomRotation = false;
         switch (tile)
         {
           case TileType.Floor:
             prefabTile = floorPrefab;
+            randomRotation = true;
             break;
           case TileType.Wall:
             prefabTile = wallPrefab;
@@ -617,12 +640,19 @@ public class LevelGenerator : MonoBehaviour
             break;
           case TileType.Room:
             prefabTile = roomPrefab;
+            randomRotation = true;
             break;
           case TileType.Corridor:
             prefabTile = corridorPrefab;
+            randomRotation = true;
             break;
         }
-        GameObject objTile = Instantiate(prefabTile, pos, floorPrefab.transform.rotation, this.transform);
+        GameObject objTile = Instantiate(prefabTile, pos, Quaternion.identity, this.transform);
+        if (randomRotation)
+        {
+          Vector3 center = objTile.transform.position + new Vector3(halfTileSize, 0, halfTileSize);
+          objTile.transform.RotateAround(center, Vector3.up, tileRotations[Random.Range(0, tileRotations.Length)]);
+        }
         objTile.transform.localScale = tileScaleVec;
         objTile.name = i + ", " + j;
 
