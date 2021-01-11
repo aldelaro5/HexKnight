@@ -633,6 +633,7 @@ public class LevelGenerator : MonoBehaviour
           case TileType.Wall:
             prefabTile = wallPrefab;
             tilesInfo[i][j].state = TileState.Blocked;
+            randomRotation = true;
             break;
           case TileType.ExitRoomWall:
             prefabTile = exitWallPrefab;
