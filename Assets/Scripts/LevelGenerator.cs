@@ -70,7 +70,6 @@ public class LevelGenerator : MonoBehaviour
   [SerializeField] private GameObject floorPrefab;
   [SerializeField] private GameObject wallPrefab;
   [SerializeField] private GameObject exitWallPrefab;
-  [SerializeField] private GameObject borderWallPrefab;
   [SerializeField] private GameObject roomPrefab;
   [SerializeField] private GameObject corridorPrefab;
   [SerializeField] private GameObject enemyPrefab;
@@ -593,31 +592,8 @@ public class LevelGenerator : MonoBehaviour
 
   private void GenerateLevelFromTiles()
   {
-    for (int edgeIndex = -1; edgeIndex <= levelParams.levelSize; edgeIndex++)
-    {
-      Vector3 posToptEdge = new Vector3(edgeIndex * levelParams.tileSize, 0, levelParams.levelSize * levelParams.tileSize);
-      GameObject tileTopEdge = Instantiate(borderWallPrefab, posToptEdge, Quaternion.identity, this.transform);
-      tileTopEdge.transform.localScale = tileScaleVec;
-      tileTopEdge.name = (int)posToptEdge.x / levelParams.tileSize + ", " + (int)posToptEdge.z / levelParams.tileSize;
-
-      Vector3 posBottomEdge = new Vector3(edgeIndex * levelParams.tileSize, 0, -levelParams.tileSize);
-      GameObject tileBottomEdge = Instantiate(borderWallPrefab, posBottomEdge, Quaternion.identity, this.transform);
-      tileBottomEdge.transform.localScale = tileScaleVec;
-      tileBottomEdge.name = (int)posBottomEdge.x / levelParams.tileSize + ", " + (int)posBottomEdge.z / levelParams.tileSize;
-    }
-
     for (int i = 0; i < levelParams.levelSize; i++)
     {
-      Vector3 posLeftEdge = new Vector3(-levelParams.tileSize, 0, i * levelParams.tileSize);
-      GameObject tileLeftEdge = Instantiate(borderWallPrefab, posLeftEdge, Quaternion.identity, this.transform);
-      tileLeftEdge.transform.localScale = tileScaleVec;
-      tileLeftEdge.name = (int)posLeftEdge.x / levelParams.tileSize + ", " + (int)posLeftEdge.z / levelParams.tileSize;
-
-      Vector3 posRightEdge = new Vector3(levelParams.levelSize * levelParams.tileSize, 0, i * levelParams.tileSize);
-      GameObject tileRightEdge = Instantiate(borderWallPrefab, posRightEdge, Quaternion.identity, this.transform);
-      tileRightEdge.transform.localScale = tileScaleVec;
-      tileRightEdge.name = (int)posRightEdge.x / levelParams.tileSize + ", " + (int)posRightEdge.z / levelParams.tileSize;
-
       for (int j = 0; j < levelParams.levelSize; j++)
       {
         Vector3 pos = new Vector3(i * levelParams.tileSize, 0, j * levelParams.tileSize);
