@@ -655,6 +655,7 @@ public class LevelGenerator : MonoBehaviour
         {
           Vector3 posCenter = new Vector3(i * levelParams.tileSize + halfTileSize, 0, j * levelParams.tileSize + halfTileSize);
           GameObject go = Instantiate(prefabObj, posCenter, Quaternion.identity, this.transform);
+          go.transform.localScale = tileScaleVec;
           tilesInfo[i][j].obj = go;
         }
       }
