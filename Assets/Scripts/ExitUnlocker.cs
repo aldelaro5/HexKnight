@@ -5,18 +5,21 @@ using UnityEngine;
 public class ExitUnlocker : MonoBehaviour
 {
   private LevelGenerator lvlGenerator;
+  private Animator animator;
 
   private void Start()
   {
     lvlGenerator = FindObjectOfType<LevelGenerator>();
+    animator = GetComponent<Animator>();
   }
 
-  private void OnTriggerEnter(Collider other) 
+  private void OnButtonPressed()
   {
-    if (other.CompareTag("Player"))
-    {
-      lvlGenerator.UnlockExit();
-      Destroy(gameObject);
-    }
+    lvlGenerator.UnlockExit();
   }
+
+  public void PressButton()
+  {
+    animator.SetTrigger("ExitUnlocked");
+  } 
 }

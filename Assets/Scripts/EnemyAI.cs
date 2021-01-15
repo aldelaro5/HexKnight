@@ -211,7 +211,7 @@ public class EnemyAI : MonoBehaviour
       transform.LookAt(transform.position + vec3Direction);
 
     LevelGenerator.TileInfo tile = lvlGenerator.GetTileInfo(destTile);
-    if (tile.state == LevelGenerator.TileState.Free && !tile.enemiesForbidden)
+    if (tile.state == LevelGenerator.TileState.Free)
       StartCoroutine(MoveToDestinationTile(destTile));
     else
       idlingCoroutine = StartCoroutine(Idle());

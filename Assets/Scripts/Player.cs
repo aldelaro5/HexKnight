@@ -139,7 +139,16 @@ public class Player : MonoBehaviour
     {
       Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-      StartCoroutine(Attack(destTile));
+      LevelGenerator.TileInfo tileInfo = lvlGenerator.GetTileInfo(destTile);
+      if (tileInfo.state == LevelGenerator.TileState.ExitUnlockerBlocked)
+      {
+        ExitUnlocker unlocker = tileInfo.obj.GetComponent<ExitUnlocker>();
+        unlocker.PressButton();
+      }
+      else
+      {
+        StartCoroutine(Attack(destTile));
+      }
     }
     else if (Input.GetKey(KeyCode.UpArrow))
     {

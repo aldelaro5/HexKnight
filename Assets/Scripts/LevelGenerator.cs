@@ -19,13 +19,14 @@ public class LevelGenerator : MonoBehaviour
   {
     Nothing,
     Enemy,
-    ExitCollectible
+    ExitUnlocker
   }
 
   public enum TileState
   {
     Free,
     Blocked,
+    ExitUnlockerBlocked,
     ExitBlocked,
     Enemy,
     Player
@@ -35,7 +36,6 @@ public class LevelGenerator : MonoBehaviour
   {
     public TileState state;
     public GameObject obj;
-    public bool enemiesForbidden;
   }
 
   private readonly Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>()
@@ -230,7 +230,7 @@ public class LevelGenerator : MonoBehaviour
     Room room = rooms[Random.Range(2, rooms.Count)];
     int xPos = Random.Range(room.posBottomLeft.x, room.posBottomLeft.x + room.size.x);
     int yPos = Random.Range(room.posBottomLeft.y, room.posBottomLeft.y + room.size.y);
-    levelTiles[xPos][yPos].tileObj = TileObj.ExitCollectible;
+    levelTiles[xPos][yPos].tileObj = TileObj.ExitUnlocker;
   }
 
   private void GenerateEnemies()
@@ -643,9 +643,9 @@ public class LevelGenerator : MonoBehaviour
           case TileObj.Enemy:
             prefabObj = enemyPrefab;
             break;
-          case TileObj.ExitCollectible:
+          case TileObj.ExitUnlocker:
             prefabObj = collectiblePrefab;
-            tilesInfo[i][j].enemiesForbidden = true;
+            tilesInfo[i][j].state = TileState.ExitUnlockerBlocked;
             break;
           case TileObj.Nothing:
             break;
@@ -682,7 +682,6 @@ public class LevelGenerator : MonoBehaviour
         levelTiles[j][k].tileObj = TileObj.Nothing;
         tilesInfo[j][k].state = TileState.Free;
         tilesInfo[j][k].obj = null;
-        tilesInfo[j][k].enemiesForbidden = false;
       }
     }
   }
