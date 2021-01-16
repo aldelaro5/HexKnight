@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 public class EnemyAI : MonoBehaviour
 {
   [SerializeField] ParticleSystem deathVFX;
+  [SerializeField] ParticleSystem atkVFX;
   [SerializeField] MeshRenderer MainMesh;
   [SerializeField] [Min(0.01f)] private float movementSpeed = 1f;
   [SerializeField] private int tilesAttackRange = 3;
@@ -115,6 +116,7 @@ public class EnemyAI : MonoBehaviour
 
   private void AIAttack()
   {
+    atkVFX.Play();
     playerMovement.GotAttacked(1);
     idlingCoroutine = StartCoroutine(WaitToAttack());
   }
