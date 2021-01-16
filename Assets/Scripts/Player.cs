@@ -6,6 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
   [SerializeField] [Min(0.01f)] private float movementSpeed = 1f;
+  [SerializeField] [Min(0.01f)] private float movementTransitionSpeed = 1f;
   [SerializeField] private float movementDelayInSeconds = 0.25f;
   [SerializeField] [Min(0.01f)] private float turningSpeed = 1f;
   [SerializeField] private float turningDelayInSeconds = 0.25f;
@@ -27,19 +28,32 @@ public class Player : MonoBehaviour
   private bool isTakingDamage = false;
   private bool isAttacking = false;
 
-  private void Start()
+  private void Awake()
   {
     animator = GetComponent<Animator>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
     movementDelay = new WaitForSeconds(movementDelayInSeconds);
     turningDelay = new WaitForSeconds(turningDelayInSeconds);
-    ResetTile();
   }
 
-  public void ResetTile()
+  public void ResetTile(Vector3 startCenter)
   {
-    currentTile = lvlGenerator.Vec3CenterToTile(transform.position);
-    lvlGenerator.ReserveTileAsPlayer(currentTile, gameObject);
+    Vector2Int startTile = lvlGenerator.Vec3CenterToTile(startCenter);
+    currentTile = startTile;
+    lvlGenerator.ReserveTileAsPlayer(startTile, gameObject);
+    transform.position = lvlGenerator.TileToVec3Center(new Vector2Int(startTile.x, startTile.y - 3));
+    StartCoroutine(MoveIntoStart(startCenter));
+  }
+
+  private IEnumerator MoveIntoStart(Vector3 start)
+  {
+    while (transform.position != start)
+    {
+      transform.position = Vector3.MoveTowards(transform.position, start, movementTransitionSpeed);
+      yield return null;
+    }
+    isMoving = false;
+    yield break;
   }
 
   private void Die()
@@ -93,9 +107,18 @@ public class Player : MonoBehaviour
     yield return movementDelay;
     if (toExit)
     {
+      destVec = lvlGenerator.TileToVec3Center(new Vector2Int(destinationTile.x, destinationTile.y + 3));
+      while (transform.position != destVec)
+      {
+        transform.position = Vector3.MoveTowards(transform.position, destVec, movementTransitionSpeed);
+        yield return null;
+      }
       lvlGenerator.ExitReached();
     }
-    isMoving = false;
+    else
+    {
+      isMoving = false;
+    }
     yield break;
   }
 

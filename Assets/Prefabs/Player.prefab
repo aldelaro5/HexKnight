@@ -165,6 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 20
+  movementTransitionSpeed: 0.2
   movementDelayInSeconds: 0.1
   turningSpeed: 300
   turningDelayInSeconds: 0.1

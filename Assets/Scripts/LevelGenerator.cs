@@ -75,6 +75,7 @@ public class LevelGenerator : MonoBehaviour
   [SerializeField] private GameObject enemyPrefab;
   [SerializeField] private GameObject playerPrefab;
   [SerializeField] private GameObject collectiblePrefab;
+  [SerializeField] private GameObject dataLinePrefab;
 
   private GameObject player = null;
   private GameManager game;
@@ -115,7 +116,7 @@ public class LevelGenerator : MonoBehaviour
 
   public bool IsTileExitTile(Vector2Int tile)
   {
-    return tile.x == levelParams.levelSize && tile.y == levelParams.levelSize - 1;
+    return tile.x == levelParams.levelSize - 1 && tile.y == levelParams.levelSize;
   }
 
   public void UnlockExit()
@@ -216,12 +217,8 @@ public class LevelGenerator : MonoBehaviour
         player = Instantiate(playerPrefab, startCenter, Quaternion.identity);
       player.name = "Player";
     }
-    else
-    {
-      player.transform.position = startCenter;
-      Player playerComponent = player.GetComponent<Player>();
-      playerComponent.ResetTile();
-    }
+    Player playerComponent = player.GetComponent<Player>();
+    playerComponent.ResetTile(startCenter);
   }
 
   private void GenerateExitUnlocker()
@@ -659,6 +656,24 @@ public class LevelGenerator : MonoBehaviour
           tilesInfo[i][j].obj = go;
         }
       }
+    }
+
+    for (int i = 0; i < 5; i++)
+    {
+      float YEnd = levelParams.levelSize + i;
+      float YStart = 0 - (i + 1);
+
+      Vector3 dataLineEndPos = new Vector3((levelParams.levelSize - 1) * levelParams.tileSize, 0, YEnd * levelParams.tileSize);
+      GameObject dataLineEndObj = Instantiate(dataLinePrefab, dataLineEndPos, Quaternion.identity, this.transform);
+      Vector3 centerDataLineEndPos = dataLineEndObj.transform.position + new Vector3(halfTileSize, 0, halfTileSize);
+      dataLineEndObj.transform.RotateAround(centerDataLineEndPos, Vector3.up, 90f);
+      dataLineEndObj.transform.localScale = tileScaleVec;
+
+      Vector3 dataLinePos = new Vector3(0, 0, YStart * levelParams.tileSize);
+      GameObject dataLineObj = Instantiate(dataLinePrefab, dataLinePos, Quaternion.identity, this.transform);
+      Vector3 centerDataLinePos = dataLineObj.transform.position + new Vector3(halfTileSize, 0, halfTileSize);
+      dataLineObj.transform.RotateAround(centerDataLinePos, Vector3.up, 90f);
+      dataLineObj.transform.localScale = tileScaleVec;
     }
   }
 
