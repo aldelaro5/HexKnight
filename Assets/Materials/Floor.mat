@@ -129,7 +129,7 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 0
     - _SampleGI: 0
-    - _Seed: 0.46387404
+    - _Seed: 0.6816518
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
