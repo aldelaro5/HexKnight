@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
 
   private IEnumerator MoveIntoStart(Vector3 start)
   {
+    isMoving = true;
     while (transform.position != start)
     {
       transform.position = Vector3.MoveTowards(transform.position, start, movementTransitionSpeed);
