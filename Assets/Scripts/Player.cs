@@ -13,10 +13,17 @@ public class Player : MonoBehaviour
   [SerializeField] private int nbrIFrames = 60;
   [SerializeField] private float attackCooldownInSeconds = 1f;
   [SerializeField] private int hp = 5;
+  [SerializeField] private AudioClip moveSfx;
+  [SerializeField] private AudioClip attackSfx;
+  [SerializeField] private AudioClip dataLinesSfx;
+  [SerializeField] private AudioClip tookDamageSfx;
+  [SerializeField] private AudioClip deathSfx;
+
+  private AudioSource audioSource;
 
   private WaitForSeconds turningDelay;
   private WaitForSeconds movementDelay;
-
+  private WaitForSeconds attackDelay;
 
   private Vector2Int currentTile;
   public Vector2Int Tile { get => currentTile; }
@@ -31,9 +38,11 @@ public class Player : MonoBehaviour
   private void Awake()
   {
     animator = GetComponent<Animator>();
+    audioSource = GetComponent<AudioSource>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
     movementDelay = new WaitForSeconds(movementDelayInSeconds);
     turningDelay = new WaitForSeconds(turningDelayInSeconds);
+    attackDelay = new WaitForSeconds(attackCooldownInSeconds);
   }
 
   public void ResetTile(Vector3 startCenter)
@@ -48,6 +57,7 @@ public class Player : MonoBehaviour
   private IEnumerator MoveIntoStart(Vector3 start)
   {
     isMoving = true;
+    audioSource.PlayOneShot(dataLinesSfx);
     while (transform.position != start)
     {
       transform.position = Vector3.MoveTowards(transform.position, start, movementTransitionSpeed);
@@ -70,10 +80,12 @@ public class Player : MonoBehaviour
     hp -= dmg;
     if (hp <= 0)
     {
+      audioSource.PlayOneShot(deathSfx);
       Die();
     }
     else
     {
+      audioSource.PlayOneShot(tookDamageSfx);
       for (int i = 0; i < nbrIFrames; i++)
         yield return null;
 
@@ -96,6 +108,7 @@ public class Player : MonoBehaviour
       lvlGenerator.ReserveTileAsPlayer(destinationTile, gameObject);
 
     Vector3 destVec = lvlGenerator.TileToVec3Center(destinationTile);
+    audioSource.PlayOneShot(moveSfx);
     while (transform.position != destVec)
     {
       transform.position = Vector3.MoveTowards(transform.position, destVec, Time.deltaTime * movementSpeed);
@@ -109,6 +122,7 @@ public class Player : MonoBehaviour
     if (toExit)
     {
       destVec = lvlGenerator.TileToVec3Center(new Vector2Int(destinationTile.x, destinationTile.y + 3));
+      audioSource.PlayOneShot(dataLinesSfx);
       while (transform.position != destVec)
       {
         transform.position = Vector3.MoveTowards(transform.position, destVec, movementTransitionSpeed);
@@ -126,15 +140,13 @@ public class Player : MonoBehaviour
   private IEnumerator Attack(Vector2Int destinationTile)
   {
     isAttacking = true;
+    audioSource.PlayOneShot(attackSfx);
     if (lvlGenerator.GetTileInfo(destinationTile).state == LevelGenerator.TileState.Enemy)
     {
       GameObject objEnemy = lvlGenerator.GetTileInfo(destinationTile).obj;
       objEnemy.SendMessage("GotAttacked", 1);
     }
-    else
-    {
-      yield return attackCooldownInSeconds;
-    }
+    yield return attackDelay;
     isAttacking = false;
     yield break;
   }
@@ -159,7 +171,7 @@ public class Player : MonoBehaviour
     if (isMoving || isTurning || isAttacking)
       return;
 
-    if (Input.GetKey(KeyCode.Z))
+    if (Input.GetKeyDown(KeyCode.Z))
     {
       Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);

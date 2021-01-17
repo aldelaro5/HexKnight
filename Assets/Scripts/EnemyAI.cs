@@ -9,6 +9,9 @@ public class EnemyAI : MonoBehaviour
 {
   [SerializeField] ParticleSystem deathVFX;
   [SerializeField] ParticleSystem atkVFX;
+  [SerializeField] AudioClip zapSfx;
+  [SerializeField] AudioClip tookDamageSfx;
+  [SerializeField] AudioClip deathSfx;
   [SerializeField] MeshRenderer MainMesh;
   [SerializeField] [Min(0.01f)] private float movementSpeed = 1f;
   [SerializeField] private int tilesAttackRange = 3;
@@ -18,6 +21,7 @@ public class EnemyAI : MonoBehaviour
   [SerializeField] private int hp = 2;
 
   private Animator animator;
+  private AudioSource audioSource;
 
   private WaitForSeconds idleDelay;
   private WaitForSeconds attackDelay;
@@ -34,6 +38,7 @@ public class EnemyAI : MonoBehaviour
   void Start()
   {
     animator = GetComponent<Animator>();
+    audioSource = GetComponent<AudioSource>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
     playerMovement = FindObjectOfType<Player>();
     idleDelay = new WaitForSeconds(idleTimeInSeconds);
@@ -117,6 +122,7 @@ public class EnemyAI : MonoBehaviour
   private void AIAttack()
   {
     atkVFX.Play();
+    audioSource.PlayOneShot(zapSfx);
     playerMovement.GotAttacked(1);
     idlingCoroutine = StartCoroutine(WaitToAttack());
   }
@@ -155,10 +161,12 @@ public class EnemyAI : MonoBehaviour
     hp -= dmg;
     if (hp <= 0)
     {
+      audioSource.PlayOneShot(deathSfx);
       Die();
     }
     else
     {
+      audioSource.PlayOneShot(tookDamageSfx);
       for (int i = 0; i < nbrIFrames; i++)
         yield return null;
 
