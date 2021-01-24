@@ -121,8 +121,8 @@ public class EnemyAI : MonoBehaviour
 
   private void AIAttack()
   {
-    atkVFX.Play();
     audioSource.PlayOneShot(zapSfx);
+    atkVFX.Play();
     playerMovement.GotAttacked(1);
     idlingCoroutine = StartCoroutine(WaitToAttack());
   }
@@ -166,7 +166,6 @@ public class EnemyAI : MonoBehaviour
     }
     else
     {
-      audioSource.PlayOneShot(tookDamageSfx);
       for (int i = 0; i < nbrIFrames; i++)
         yield return null;
 
