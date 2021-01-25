@@ -40,6 +40,7 @@ public class Player : MonoBehaviour
   private bool isTakingDamage = false;
   private bool isAttacking = false;
   private bool isShielding = false;
+  private bool triggerStopShield = false;
 
   private void Awake()
   {
@@ -102,6 +103,8 @@ public class Player : MonoBehaviour
 
   public void GotAttacked(int dmg)
   {
+    triggerStopShield = true;
+
     if (!isTakingDamage && !isShielding)
       StartCoroutine(ReceiveHit(dmg));
   }
@@ -165,7 +168,8 @@ public class Player : MonoBehaviour
     shieldVFX.Play();
     shieldObject.SetActive(true);
     int frames = 0;
-    while (frames < nbrShieldFrames)
+    triggerStopShield = false;
+    while (frames < nbrShieldFrames && !triggerStopShield)
     {
       yield return null;
       frames++;
@@ -195,6 +199,8 @@ public class Player : MonoBehaviour
   {
     if (isMoving || isTurning || isAttacking || isShielding)
       return;
+    
+    hoverObject.transform.localRotation = Quaternion.identity;
 
     if (Input.GetKeyDown(KeyCode.C))
     {
@@ -221,14 +227,20 @@ public class Player : MonoBehaviour
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
       if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free ||
           lvlGenerator.IsTileExitTile(destTile))
+      {
+        hoverObject.transform.localRotation = Quaternion.Euler(45,0,0);
         StartCoroutine(MoveToDestinationTile(destTile));
+      }
     }
     else if (Input.GetKey(KeyCode.DownArrow))
     {
       Vector3 destVector = transform.position - transform.forward * lvlGenerator.TileSize;
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
+      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)    
+      {
+        hoverObject.transform.localRotation = Quaternion.Euler(-45,0,0);
         StartCoroutine(MoveToDestinationTile(destTile));
+      }
     }
     else if (Input.GetKey(KeyCode.X))
     {
@@ -236,15 +248,21 @@ public class Player : MonoBehaviour
       {
         Vector3 destVector = transform.position + transform.right * lvlGenerator.TileSize;
         Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-        if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
+        if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)   
+        {
+          hoverObject.transform.localRotation = Quaternion.Euler(0,0,-45);
           StartCoroutine(MoveToDestinationTile(destTile));
+        }
       }
       else if (Input.GetKey(KeyCode.LeftArrow))
       {
         Vector3 destVector = transform.position + -transform.right * lvlGenerator.TileSize;
         Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-        if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
+        if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)     
+        {
+          hoverObject.transform.localRotation = Quaternion.Euler(0,0,45);
           StartCoroutine(MoveToDestinationTile(destTile));
+        }
       }
     }
     else
