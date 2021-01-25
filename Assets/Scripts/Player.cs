@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
   [SerializeField] [Min(0.01f)] private float turningSpeed = 1f;
   [SerializeField] private float turningDelayInSeconds = 0.25f;
   [SerializeField] private int nbrIFrames = 60;
+  [SerializeField] private int nbrShieldFrames = 120;
   [SerializeField] private float attackCooldownInSeconds = 1f;
   [SerializeField] private int hp = 5;
   [SerializeField] private AudioClip moveSfx;
@@ -18,12 +19,16 @@ public class Player : MonoBehaviour
   [SerializeField] private AudioClip dataLinesSfx;
   [SerializeField] private AudioClip tookDamageSfx;
   [SerializeField] private AudioClip deathSfx;
+  [SerializeField] private ParticleSystem atkVFX;
+  [SerializeField] private ParticleSystem shieldVFX;
+  [SerializeField] private GameObject shieldObject;
+  [SerializeField] private GameObject hoverObject;
 
   private AudioSource audioSource;
 
   private WaitForSeconds turningDelay;
   private WaitForSeconds movementDelay;
-  private WaitForSeconds attackDelay;
+  private WaitForSeconds attackShieldDelay;
 
   private Vector2Int currentTile;
   public Vector2Int Tile { get => currentTile; }
@@ -34,6 +39,7 @@ public class Player : MonoBehaviour
   private bool isTurning = false;
   private bool isTakingDamage = false;
   private bool isAttacking = false;
+  private bool isShielding = false;
 
   private void Awake()
   {
@@ -42,7 +48,7 @@ public class Player : MonoBehaviour
     lvlGenerator = FindObjectOfType<LevelGenerator>();
     movementDelay = new WaitForSeconds(movementDelayInSeconds);
     turningDelay = new WaitForSeconds(turningDelayInSeconds);
-    attackDelay = new WaitForSeconds(attackCooldownInSeconds);
+    attackShieldDelay = new WaitForSeconds(attackCooldownInSeconds);
   }
 
   public void ResetTile(Vector3 startCenter)
@@ -96,7 +102,7 @@ public class Player : MonoBehaviour
 
   public void GotAttacked(int dmg)
   {
-    if (!isTakingDamage)
+    if (!isTakingDamage && !isShielding)
       StartCoroutine(ReceiveHit(dmg));
   }
 
@@ -140,14 +146,33 @@ public class Player : MonoBehaviour
   private IEnumerator Attack(Vector2Int destinationTile)
   {
     isAttacking = true;
+    atkVFX.Play();
     audioSource.PlayOneShot(attackSfx);
     if (lvlGenerator.GetTileInfo(destinationTile).state == LevelGenerator.TileState.Enemy)
     {
       GameObject objEnemy = lvlGenerator.GetTileInfo(destinationTile).obj;
       objEnemy.SendMessage("GotAttacked", 1);
     }
-    yield return attackDelay;
+    yield return attackShieldDelay;
+    atkVFX.Stop();
     isAttacking = false;
+    yield break;
+  }
+
+  private IEnumerator Shield()
+  {
+    isShielding = true;
+    shieldVFX.Play();
+    shieldObject.SetActive(true);
+    int frames = 0;
+    while (frames < nbrShieldFrames)
+    {
+      yield return null;
+      frames++;
+    }
+    shieldVFX.Stop();
+    shieldObject.SetActive(false);
+    isShielding = false;
     yield break;
   }
 
@@ -168,10 +193,14 @@ public class Player : MonoBehaviour
 
   private void Update()
   {
-    if (isMoving || isTurning || isAttacking)
+    if (isMoving || isTurning || isAttacking || isShielding)
       return;
 
-    if (Input.GetKeyDown(KeyCode.Z))
+    if (Input.GetKeyDown(KeyCode.C))
+    {
+      StartCoroutine(Shield());
+    }
+    else if (Input.GetKeyDown(KeyCode.Z))
     {
       Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
