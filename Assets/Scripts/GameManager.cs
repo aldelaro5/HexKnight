@@ -6,11 +6,13 @@ public class GameManager : MonoBehaviour
 {
   [SerializeField] private LevelGeneratorParams[] levels;
   [SerializeField] private GameObject levelPrefab;
+  [SerializeField] private Camera mainCamera;
+  [SerializeField] private Canvas mainMenu;
   
   private LevelGenerator generator;
   private int currentLevelIndex = 0;
 
-  private void Start()
+  public void OnStartGame()
   {
     currentLevelIndex = 0;
     GameObject go = Instantiate(levelPrefab, Vector3.zero, Quaternion.identity, transform);
@@ -18,6 +20,8 @@ public class GameManager : MonoBehaviour
     generator = go.GetComponent<LevelGenerator>();
 
     generator.GenerateLevel(levels[0]);
+    mainCamera.enabled = false;
+    mainMenu.enabled = false;
   }
 
   public void GoToNextLevel()
@@ -28,5 +32,11 @@ public class GameManager : MonoBehaviour
     currentLevelIndex++;
     if (currentLevelIndex < levels.Length)
       generator.GenerateLevel(levels[currentLevelIndex]);
+  }
+
+  public void OnExitGame()
+  {
+    print("Quitting...");
+    Application.Quit();
   }
 }
