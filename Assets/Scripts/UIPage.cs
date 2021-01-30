@@ -1,15 +1,27 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class UIPage : MonoBehaviour
 {
   [SerializeField] private GameObject defaultSelectedObject;
+  private EventSystem evtSystem;
+
+  private void Awake()
+  { 
+    evtSystem = EventSystem.current;
+  }
 
   private void OnEnable()
   {
-    if (EventSystem.current.currentSelectedGameObject != null)
-      EventSystem.current.SetSelectedGameObject(defaultSelectedObject);
+    // OnEnable is too early for this, so we wait at the end of the frames before selecting
+    StartCoroutine(WaitThenSelectDefault());
+  }
+
+  private IEnumerator WaitThenSelectDefault()
+  {
+    yield return new WaitForEndOfFrame();
+    evtSystem.SetSelectedGameObject(defaultSelectedObject);
+    yield break;
   }
 }

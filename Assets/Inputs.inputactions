@@ -6,39 +6,15 @@
             "id": "e87fb5f2-5443-4c63-a49a-6861500f6891",
             "actions": [
                 {
-                    "name": "Up",
-                    "type": "Button",
-                    "id": "0e3fef32-ec70-4e9f-aff7-9efb7c189bd9",
-                    "expectedControlType": "Button",
+                    "name": "Navigate",
+                    "type": "Value",
+                    "id": "aeebddab-c488-469c-9ef4-8a069364b379",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
                 },
                 {
-                    "name": "Down",
-                    "type": "Button",
-                    "id": "8261acfb-6044-4a5b-8872-8726c089c457",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Right",
-                    "type": "Button",
-                    "id": "01f3b063-dea0-4992-88fa-e857b1267cca",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Left",
-                    "type": "Button",
-                    "id": "ecabe39d-95d1-4e83-90d2-98028ad6e9ce",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Confirm",
+                    "name": "Submit",
                     "type": "Button",
                     "id": "ea6aac5b-cbfa-4222-a3dc-b35efba05fd5",
                     "expectedControlType": "Button",
@@ -52,53 +28,25 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Point",
+                    "type": "PassThrough",
+                    "id": "f1a59f3a-9f3b-42b1-835d-5f80d3870a07",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Click",
+                    "type": "PassThrough",
+                    "id": "c0817214-a9d6-4ee9-b3f6-e841d42b4c2e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "1f1036b0-864f-4f8b-9398-56a08a9e9a6c",
-                    "path": "<Keyboard>/upArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Up",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0d306fa6-1ac8-4f60-8f92-d9e07287aada",
-                    "path": "<Keyboard>/downArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Down",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "c3087c30-949c-4eec-8a44-e5c3da0abe5b",
-                    "path": "<Keyboard>/rightArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Right",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f7eea8ec-a2bf-4002-9630-b9fa08bfbda9",
-                    "path": "<Keyboard>/leftArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Left",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "",
                     "id": "3e85e028-d1b9-49bb-988f-563bfc965067",
@@ -106,7 +54,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Confirm",
+                    "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -120,6 +68,224 @@
                     "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "Keyboard",
+                    "id": "b5036cf0-4fef-477c-a978-15b41eccdeb2",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Navigate",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "c07878bb-bb60-4715-bae5-4176ce24585b",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "9854e27f-a57e-4517-991a-723c2f388318",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "fb7b4838-db8d-4faf-b3cf-02fa6c184298",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "4fcc541d-6c83-474c-b9f8-274791f3a6f1",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "b501681a-64dd-4245-b867-17c66e9bbcdb",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Point",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2d0a651e-4cb9-4d8e-b434-9f61b9cc0e10",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Player",
+            "id": "99b99d14-6e3b-46d7-8253-a2df24e15566",
+            "actions": [
+                {
+                    "name": "Forward",
+                    "type": "Button",
+                    "id": "5791eddf-97d8-43c9-af35-658d6ae0d83b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Backward",
+                    "type": "Button",
+                    "id": "ed3c996e-eac0-41ef-8ac8-40caf483705c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Left",
+                    "type": "Button",
+                    "id": "30c96abe-29d1-4610-8d2f-92b03b61232d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Right",
+                    "type": "Button",
+                    "id": "5869a247-9c7a-4f0d-9c91-557c44be199d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "670c6b03-4254-4fdb-b080-7541edc86c24",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Shield",
+                    "type": "Button",
+                    "id": "1da6914a-abf7-49e7-94fd-49aa0c0814c4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Lock Rotation",
+                    "type": "Button",
+                    "id": "fb1230b4-ea7a-4726-85ec-d90488065abb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "9a4525d2-afbb-479c-80c3-9c0f045a4849",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Forward",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "99d40b9c-15e7-4a44-8814-3bc3dec22a2d",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Backward",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4e8cb776-9926-4c62-84f3-ce46e3036a7c",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Left",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "25268d9a-7569-4323-bfa6-fa53fa16cb43",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fb49099b-cf50-469a-a8bc-c0a9e6f395e1",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d47e19a6-4320-44ba-9dad-22743fd20fb6",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Shield",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "22404bfb-bc7a-4779-b02a-c565f4a55fd6",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Lock Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
@@ -131,6 +297,11 @@
             "devices": [
                 {
                     "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
                     "isOptional": false,
                     "isOR": false
                 }
