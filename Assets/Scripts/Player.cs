@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
@@ -34,6 +35,8 @@ public class Player : MonoBehaviour
   public Vector2Int Tile { get => currentTile; }
 
   private LevelGenerator lvlGenerator;
+  private PlayerInput playerInput;
+  private Inputs inputs;
   private Animator animator;
   private bool isMoving = false;
   private bool isTurning = false;
@@ -44,12 +47,116 @@ public class Player : MonoBehaviour
 
   private void Awake()
   {
+    inputs = new Inputs();
+    inputs.UI.Disable();
+    inputs.Player.Enable();
+    inputs.Player.Attack.performed += x => OnAttackInput(x);
+    inputs.Player.Shield.performed += x => OnShieldInput(x);
     animator = GetComponent<Animator>();
     audioSource = GetComponent<AudioSource>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
     movementDelay = new WaitForSeconds(movementDelayInSeconds);
     turningDelay = new WaitForSeconds(turningDelayInSeconds);
     attackShieldDelay = new WaitForSeconds(attackCooldownInSeconds);
+  }
+
+  private bool IsBusy()
+  {
+    return (isMoving || isTurning || isAttacking || isShielding);
+  }
+
+
+
+  private void Update()
+  {
+    if (IsBusy())
+      return;
+
+    hoverObject.transform.localRotation = Quaternion.identity;
+    
+    ProcessMovementInputs();
+  }
+
+  private void ProcessMovementInputs()
+  {
+    if (inputs.Player.ForwardBackward.ReadValue<float>() == 1)
+    {
+      Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
+      Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
+      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free ||
+          lvlGenerator.IsTileExitTile(destTile))
+      {
+        hoverObject.transform.localRotation = Quaternion.Euler(45, 0, 0);
+        StartCoroutine(MoveToDestinationTile(destTile));
+      }
+    }
+    else if (inputs.Player.ForwardBackward.ReadValue<float>() == -1)
+    {
+      Vector3 destVector = transform.position - transform.forward * lvlGenerator.TileSize;
+      Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
+      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
+      {
+        hoverObject.transform.localRotation = Quaternion.Euler(-45, 0, 0);
+        StartCoroutine(MoveToDestinationTile(destTile));
+      }
+    }
+    else if (inputs.Player.LockRotation.ReadValue<float>() == 1)
+    {
+      if (inputs.Player.LeftRight.ReadValue<float>() == 1)
+      {
+        Vector3 destVector = transform.position + transform.right * lvlGenerator.TileSize;
+        Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
+        if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
+        {
+          hoverObject.transform.localRotation = Quaternion.Euler(0, 0, -45);
+          StartCoroutine(MoveToDestinationTile(destTile));
+        }
+      }
+      else if (inputs.Player.LeftRight.ReadValue<float>() == -1)
+      {
+        Vector3 destVector = transform.position + -transform.right * lvlGenerator.TileSize;
+        Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
+        if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)
+        {
+          hoverObject.transform.localRotation = Quaternion.Euler(0, 0, 45);
+          StartCoroutine(MoveToDestinationTile(destTile));
+        }
+      }
+    }
+    else
+    {
+      if (inputs.Player.LeftRight.ReadValue<float>() == 1)
+        StartCoroutine(TurnToAngleAroundY(90f));
+      else if (inputs.Player.LeftRight.ReadValue<float>() == -1)
+        StartCoroutine(TurnToAngleAroundY(-90f));
+    }
+  }
+
+  public void OnShieldInput(InputAction.CallbackContext ctx)
+  {
+    if (IsBusy())
+      return;
+
+    StartCoroutine(Shield());
+  }
+
+  public void OnAttackInput(InputAction.CallbackContext ctx)
+  {
+    if (IsBusy())
+      return;
+
+    Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
+    Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
+    LevelGenerator.TileInfo tileInfo = lvlGenerator.GetTileInfo(destTile);
+    if (tileInfo.state == LevelGenerator.TileState.ExitUnlockerBlocked)
+    {
+      ExitUnlocker unlocker = tileInfo.obj.GetComponent<ExitUnlocker>();
+      unlocker.PressButton();
+    }
+    else
+    {
+      StartCoroutine(Attack(destTile));
+    }
   }
 
   public void ResetTile(Vector3 startCenter)
@@ -193,84 +300,5 @@ public class Player : MonoBehaviour
     yield return turningDelay;
     isTurning = false;
     yield break;
-  }
-
-  private void Update()
-  {
-    if (isMoving || isTurning || isAttacking || isShielding)
-      return;
-    
-    hoverObject.transform.localRotation = Quaternion.identity;
-
-    if (Input.GetKeyDown(KeyCode.C))
-    {
-      StartCoroutine(Shield());
-    }
-    else if (Input.GetKeyDown(KeyCode.Z))
-    {
-      Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
-      Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-      LevelGenerator.TileInfo tileInfo = lvlGenerator.GetTileInfo(destTile);
-      if (tileInfo.state == LevelGenerator.TileState.ExitUnlockerBlocked)
-      {
-        ExitUnlocker unlocker = tileInfo.obj.GetComponent<ExitUnlocker>();
-        unlocker.PressButton();
-      }
-      else
-      {
-        StartCoroutine(Attack(destTile));
-      }
-    }
-    else if (Input.GetKey(KeyCode.UpArrow))
-    {
-      Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
-      Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free ||
-          lvlGenerator.IsTileExitTile(destTile))
-      {
-        hoverObject.transform.localRotation = Quaternion.Euler(45,0,0);
-        StartCoroutine(MoveToDestinationTile(destTile));
-      }
-    }
-    else if (Input.GetKey(KeyCode.DownArrow))
-    {
-      Vector3 destVector = transform.position - transform.forward * lvlGenerator.TileSize;
-      Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-      if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)    
-      {
-        hoverObject.transform.localRotation = Quaternion.Euler(-45,0,0);
-        StartCoroutine(MoveToDestinationTile(destTile));
-      }
-    }
-    else if (Input.GetKey(KeyCode.X))
-    {
-      if (Input.GetKey(KeyCode.RightArrow))
-      {
-        Vector3 destVector = transform.position + transform.right * lvlGenerator.TileSize;
-        Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-        if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)   
-        {
-          hoverObject.transform.localRotation = Quaternion.Euler(0,0,-45);
-          StartCoroutine(MoveToDestinationTile(destTile));
-        }
-      }
-      else if (Input.GetKey(KeyCode.LeftArrow))
-      {
-        Vector3 destVector = transform.position + -transform.right * lvlGenerator.TileSize;
-        Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
-        if (lvlGenerator.GetTileInfo(destTile).state == LevelGenerator.TileState.Free)     
-        {
-          hoverObject.transform.localRotation = Quaternion.Euler(0,0,45);
-          StartCoroutine(MoveToDestinationTile(destTile));
-        }
-      }
-    }
-    else
-    {
-      if (Input.GetKey(KeyCode.RightArrow))
-        StartCoroutine(TurnToAngleAroundY(90f));
-      else if (Input.GetKey(KeyCode.LeftArrow))
-        StartCoroutine(TurnToAngleAroundY(-90f));
-    }
   }
 }

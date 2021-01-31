@@ -404,11 +404,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3815543570867801114, guid: 75f7d5383679da88cafbebbb055e3f7a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 0.000013351
       objectReference: {fileID: 0}
     - target: {fileID: 3815543570867801114, guid: 75f7d5383679da88cafbebbb055e3f7a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 534
+      value: 379
       objectReference: {fileID: 0}
     - target: {fileID: 3815543570867801114, guid: 75f7d5383679da88cafbebbb055e3f7a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -883,6 +883,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1996665865}
     m_Modifications:
+    - target: {fileID: 6264592786742846568, guid: 9bc25d59d790a6aabb558c6bf13ee500, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6264592786742846570, guid: 9bc25d59d790a6aabb558c6bf13ee500, type: 3}
       propertyPath: m_Name
       value: MainMenu
@@ -1094,7 +1098,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7068625010486948230, guid: 89e2e4e4ea8dbcb188dcceb71ecb4c77, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -549
+      value: -386
       objectReference: {fileID: 0}
     - target: {fileID: 7068625010486948230, guid: 89e2e4e4ea8dbcb188dcceb71ecb4c77, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1304,7 +1308,7 @@ MonoBehaviour:
     MaxStartRoomSize: {x: 2, y: 2}
     MinEndRoomSize: {x: 2, y: 2}
     MaxEndRoomSize: {x: 2, y: 2}
-    nbrEnemies: 3
+    nbrEnemies: 0
   - levelSize: 12
     tileSize: 3
     prefferedMinNbrRoom: 5
@@ -1330,6 +1334,7 @@ MonoBehaviour:
   levelPrefab: {fileID: 3736194495924249749, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
   mainCamera: {fileID: 1592392508}
   mainMenu: {fileID: 1996665864}
+  uiManager: {fileID: 1996665866}
 --- !u!4 &1438937399
 Transform:
   m_ObjectHideFlags: 0
@@ -1373,8 +1378,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1592392504}
-  m_LocalRotation: {x: 0.0045005744, y: 0.006000789, z: -0.000027001224, w: 0.99997187}
-  m_LocalPosition: {x: 218.44992, y: 159.41281, z: -545.81494}
+  m_LocalRotation: {x: 4.6566134e-10, y: 4.6566134e-10, z: -3.6379792e-12, w: 1}
+  m_LocalPosition: {x: 225.5, y: 125, z: -515.6559}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1438937399}
@@ -1544,7 +1549,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3815543570867801114, guid: 75f7d5383679da88cafbebbb055e3f7a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 539
+      value: 376
       objectReference: {fileID: 0}
     - target: {fileID: 3815543570867801114, guid: 75f7d5383679da88cafbebbb055e3f7a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1645,7 +1650,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7068625010486948230, guid: 89e2e4e4ea8dbcb188dcceb71ecb4c77, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 344
+      value: 210
       objectReference: {fileID: 0}
     - target: {fileID: 7068625010486948230, guid: 89e2e4e4ea8dbcb188dcceb71ecb4c77, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2102,7 +2107,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7068625010486948230, guid: 89e2e4e4ea8dbcb188dcceb71ecb4c77, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -539
+      value: -405
       objectReference: {fileID: 0}
     - target: {fileID: 7068625010486948230, guid: 89e2e4e4ea8dbcb188dcceb71ecb4c77, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

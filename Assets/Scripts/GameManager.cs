@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
   [SerializeField] private GameObject levelPrefab;
   [SerializeField] private Camera mainCamera;
   [SerializeField] private Canvas mainMenu;
+  [SerializeField] private UIManager uiManager;
   
   private LevelGenerator generator;
   private int currentLevelIndex = 0;
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
     generator.GenerateLevel(levels[0]);
     mainCamera.enabled = false;
     mainMenu.enabled = false;
+    uiManager.ChangePage(null);
   }
 
   public void GoToNextLevel()

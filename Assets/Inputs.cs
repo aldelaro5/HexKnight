@@ -166,38 +166,6 @@ public class @Inputs : IInputActionCollection, IDisposable
             ""id"": ""99b99d14-6e3b-46d7-8253-a2df24e15566"",
             ""actions"": [
                 {
-                    ""name"": ""Forward"",
-                    ""type"": ""Button"",
-                    ""id"": ""5791eddf-97d8-43c9-af35-658d6ae0d83b"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""Backward"",
-                    ""type"": ""Button"",
-                    ""id"": ""ed3c996e-eac0-41ef-8ac8-40caf483705c"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""Left"",
-                    ""type"": ""Button"",
-                    ""id"": ""30c96abe-29d1-4610-8d2f-92b03b61232d"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""Right"",
-                    ""type"": ""Button"",
-                    ""id"": ""5869a247-9c7a-4f0d-9c91-557c44be199d"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
                     ""name"": ""Attack"",
                     ""type"": ""Button"",
                     ""id"": ""670c6b03-4254-4fdb-b080-7541edc86c24"",
@@ -214,59 +182,31 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
+                    ""name"": ""Forward Backward"",
+                    ""type"": ""Value"",
+                    ""id"": ""649603b7-af80-41f4-8880-5eb1d1e6c06b"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Left Right"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""610ed5b5-9c23-4a1a-9405-c1dc24259245"",
+                    ""expectedControlType"": ""Digital"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
                     ""name"": ""Lock Rotation"",
-                    ""type"": ""Button"",
-                    ""id"": ""fb1230b4-ea7a-4726-85ec-d90488065abb"",
-                    ""expectedControlType"": ""Button"",
+                    ""type"": ""Value"",
+                    ""id"": ""4f246801-7897-462d-929c-234bcb5cd04e"",
+                    ""expectedControlType"": ""Digital"",
                     ""processors"": """",
                     ""interactions"": """"
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""9a4525d2-afbb-479c-80c3-9c0f045a4849"",
-                    ""path"": ""<Keyboard>/upArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Forward"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""99d40b9c-15e7-4a44-8814-3bc3dec22a2d"",
-                    ""path"": ""<Keyboard>/downArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Backward"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""4e8cb776-9926-4c62-84f3-ce46e3036a7c"",
-                    ""path"": ""<Keyboard>/leftArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""25268d9a-7569-4323-bfa6-fa53fa16cb43"",
-                    ""path"": ""<Keyboard>/rightArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Right"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": """",
                     ""id"": ""fb49099b-cf50-469a-a8bc-c0a9e6f395e1"",
@@ -290,8 +230,74 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
+                    ""name"": ""Direction"",
+                    ""id"": ""46412e80-fc05-4df5-903b-78818c16e5ef"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Forward Backward"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""4c281dbc-6070-4ba4-acd8-9e5abd8968b8"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Forward Backward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""fa8eb40b-e926-4e98-aa53-1c7cf0db7f35"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Forward Backward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Direction"",
+                    ""id"": ""8b7360d3-10ec-49ad-aaf5-f2e1cd71b741"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left Right"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""92e90fba-5843-476e-9ce4-234e1005ce0c"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Left Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""88fc1c43-3e77-435c-9276-c5381ee5ef73"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Left Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": """",
-                    ""id"": ""22404bfb-bc7a-4779-b02a-c565f4a55fd6"",
+                    ""id"": ""8fee8e54-3813-42bb-be87-0da2f970496c"",
                     ""path"": ""<Keyboard>/z"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -342,12 +348,10 @@ public class @Inputs : IInputActionCollection, IDisposable
         m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-        m_Player_Forward = m_Player.FindAction("Forward", throwIfNotFound: true);
-        m_Player_Backward = m_Player.FindAction("Backward", throwIfNotFound: true);
-        m_Player_Left = m_Player.FindAction("Left", throwIfNotFound: true);
-        m_Player_Right = m_Player.FindAction("Right", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Shield = m_Player.FindAction("Shield", throwIfNotFound: true);
+        m_Player_ForwardBackward = m_Player.FindAction("Forward Backward", throwIfNotFound: true);
+        m_Player_LeftRight = m_Player.FindAction("Left Right", throwIfNotFound: true);
         m_Player_LockRotation = m_Player.FindAction("Lock Rotation", throwIfNotFound: true);
     }
 
@@ -463,23 +467,19 @@ public class @Inputs : IInputActionCollection, IDisposable
     // Player
     private readonly InputActionMap m_Player;
     private IPlayerActions m_PlayerActionsCallbackInterface;
-    private readonly InputAction m_Player_Forward;
-    private readonly InputAction m_Player_Backward;
-    private readonly InputAction m_Player_Left;
-    private readonly InputAction m_Player_Right;
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Shield;
+    private readonly InputAction m_Player_ForwardBackward;
+    private readonly InputAction m_Player_LeftRight;
     private readonly InputAction m_Player_LockRotation;
     public struct PlayerActions
     {
         private @Inputs m_Wrapper;
         public PlayerActions(@Inputs wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Forward => m_Wrapper.m_Player_Forward;
-        public InputAction @Backward => m_Wrapper.m_Player_Backward;
-        public InputAction @Left => m_Wrapper.m_Player_Left;
-        public InputAction @Right => m_Wrapper.m_Player_Right;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @Shield => m_Wrapper.m_Player_Shield;
+        public InputAction @ForwardBackward => m_Wrapper.m_Player_ForwardBackward;
+        public InputAction @LeftRight => m_Wrapper.m_Player_LeftRight;
         public InputAction @LockRotation => m_Wrapper.m_Player_LockRotation;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
@@ -490,24 +490,18 @@ public class @Inputs : IInputActionCollection, IDisposable
         {
             if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
             {
-                @Forward.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForward;
-                @Forward.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForward;
-                @Forward.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForward;
-                @Backward.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBackward;
-                @Backward.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBackward;
-                @Backward.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBackward;
-                @Left.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLeft;
-                @Left.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLeft;
-                @Left.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLeft;
-                @Right.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRight;
-                @Right.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRight;
-                @Right.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRight;
                 @Attack.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
                 @Attack.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
                 @Attack.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
                 @Shield.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnShield;
                 @Shield.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnShield;
                 @Shield.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnShield;
+                @ForwardBackward.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForwardBackward;
+                @ForwardBackward.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForwardBackward;
+                @ForwardBackward.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForwardBackward;
+                @LeftRight.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLeftRight;
+                @LeftRight.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLeftRight;
+                @LeftRight.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLeftRight;
                 @LockRotation.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockRotation;
                 @LockRotation.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockRotation;
                 @LockRotation.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockRotation;
@@ -515,24 +509,18 @@ public class @Inputs : IInputActionCollection, IDisposable
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Forward.started += instance.OnForward;
-                @Forward.performed += instance.OnForward;
-                @Forward.canceled += instance.OnForward;
-                @Backward.started += instance.OnBackward;
-                @Backward.performed += instance.OnBackward;
-                @Backward.canceled += instance.OnBackward;
-                @Left.started += instance.OnLeft;
-                @Left.performed += instance.OnLeft;
-                @Left.canceled += instance.OnLeft;
-                @Right.started += instance.OnRight;
-                @Right.performed += instance.OnRight;
-                @Right.canceled += instance.OnRight;
                 @Attack.started += instance.OnAttack;
                 @Attack.performed += instance.OnAttack;
                 @Attack.canceled += instance.OnAttack;
                 @Shield.started += instance.OnShield;
                 @Shield.performed += instance.OnShield;
                 @Shield.canceled += instance.OnShield;
+                @ForwardBackward.started += instance.OnForwardBackward;
+                @ForwardBackward.performed += instance.OnForwardBackward;
+                @ForwardBackward.canceled += instance.OnForwardBackward;
+                @LeftRight.started += instance.OnLeftRight;
+                @LeftRight.performed += instance.OnLeftRight;
+                @LeftRight.canceled += instance.OnLeftRight;
                 @LockRotation.started += instance.OnLockRotation;
                 @LockRotation.performed += instance.OnLockRotation;
                 @LockRotation.canceled += instance.OnLockRotation;
@@ -568,12 +556,10 @@ public class @Inputs : IInputActionCollection, IDisposable
     }
     public interface IPlayerActions
     {
-        void OnForward(InputAction.CallbackContext context);
-        void OnBackward(InputAction.CallbackContext context);
-        void OnLeft(InputAction.CallbackContext context);
-        void OnRight(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnShield(InputAction.CallbackContext context);
+        void OnForwardBackward(InputAction.CallbackContext context);
+        void OnLeftRight(InputAction.CallbackContext context);
         void OnLockRotation(InputAction.CallbackContext context);
     }
 }

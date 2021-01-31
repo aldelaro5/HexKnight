@@ -153,38 +153,6 @@
             "id": "99b99d14-6e3b-46d7-8253-a2df24e15566",
             "actions": [
                 {
-                    "name": "Forward",
-                    "type": "Button",
-                    "id": "5791eddf-97d8-43c9-af35-658d6ae0d83b",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Backward",
-                    "type": "Button",
-                    "id": "ed3c996e-eac0-41ef-8ac8-40caf483705c",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Left",
-                    "type": "Button",
-                    "id": "30c96abe-29d1-4610-8d2f-92b03b61232d",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Right",
-                    "type": "Button",
-                    "id": "5869a247-9c7a-4f0d-9c91-557c44be199d",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
                     "name": "Attack",
                     "type": "Button",
                     "id": "670c6b03-4254-4fdb-b080-7541edc86c24",
@@ -201,59 +169,31 @@
                     "interactions": ""
                 },
                 {
+                    "name": "Forward Backward",
+                    "type": "Value",
+                    "id": "649603b7-af80-41f4-8880-5eb1d1e6c06b",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Left Right",
+                    "type": "PassThrough",
+                    "id": "610ed5b5-9c23-4a1a-9405-c1dc24259245",
+                    "expectedControlType": "Digital",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "Lock Rotation",
-                    "type": "Button",
-                    "id": "fb1230b4-ea7a-4726-85ec-d90488065abb",
-                    "expectedControlType": "Button",
+                    "type": "Value",
+                    "id": "4f246801-7897-462d-929c-234bcb5cd04e",
+                    "expectedControlType": "Digital",
                     "processors": "",
                     "interactions": ""
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "9a4525d2-afbb-479c-80c3-9c0f045a4849",
-                    "path": "<Keyboard>/upArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Forward",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "99d40b9c-15e7-4a44-8814-3bc3dec22a2d",
-                    "path": "<Keyboard>/downArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Backward",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4e8cb776-9926-4c62-84f3-ce46e3036a7c",
-                    "path": "<Keyboard>/leftArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Left",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "25268d9a-7569-4323-bfa6-fa53fa16cb43",
-                    "path": "<Keyboard>/rightArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Right",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "",
                     "id": "fb49099b-cf50-469a-a8bc-c0a9e6f395e1",
@@ -277,8 +217,74 @@
                     "isPartOfComposite": false
                 },
                 {
+                    "name": "Direction",
+                    "id": "46412e80-fc05-4df5-903b-78818c16e5ef",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Forward Backward",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "4c281dbc-6070-4ba4-acd8-9e5abd8968b8",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Forward Backward",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "fa8eb40b-e926-4e98-aa53-1c7cf0db7f35",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Forward Backward",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Direction",
+                    "id": "8b7360d3-10ec-49ad-aaf5-f2e1cd71b741",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Left Right",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "92e90fba-5843-476e-9ce4-234e1005ce0c",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Left Right",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "88fc1c43-3e77-435c-9276-c5381ee5ef73",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Left Right",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
                     "name": "",
-                    "id": "22404bfb-bc7a-4779-b02a-c565f4a55fd6",
+                    "id": "8fee8e54-3813-42bb-be87-0da2f970496c",
                     "path": "<Keyboard>/z",
                     "interactions": "",
                     "processors": "",
