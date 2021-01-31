@@ -336,6 +336,14 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""4ecc9ae2-78f8-47a4-aeb5-94f12e1a74e1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -602,6 +610,28 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""action"": ""Lock Rotation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cb52c087-971f-4999-b4ce-9ec1481021ba"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1e23b47b-4b17-4062-a741-9f59e62f4d46"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -650,6 +680,7 @@ public class @Inputs : IInputActionCollection, IDisposable
         m_Player_ForwardBackward = m_Player.FindAction("Forward Backward", throwIfNotFound: true);
         m_Player_LeftRight = m_Player.FindAction("Left Right", throwIfNotFound: true);
         m_Player_LockRotation = m_Player.FindAction("Lock Rotation", throwIfNotFound: true);
+        m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -769,6 +800,7 @@ public class @Inputs : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_ForwardBackward;
     private readonly InputAction m_Player_LeftRight;
     private readonly InputAction m_Player_LockRotation;
+    private readonly InputAction m_Player_Pause;
     public struct PlayerActions
     {
         private @Inputs m_Wrapper;
@@ -778,6 +810,7 @@ public class @Inputs : IInputActionCollection, IDisposable
         public InputAction @ForwardBackward => m_Wrapper.m_Player_ForwardBackward;
         public InputAction @LeftRight => m_Wrapper.m_Player_LeftRight;
         public InputAction @LockRotation => m_Wrapper.m_Player_LockRotation;
+        public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -802,6 +835,9 @@ public class @Inputs : IInputActionCollection, IDisposable
                 @LockRotation.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockRotation;
                 @LockRotation.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockRotation;
                 @LockRotation.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLockRotation;
+                @Pause.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -821,6 +857,9 @@ public class @Inputs : IInputActionCollection, IDisposable
                 @LockRotation.started += instance.OnLockRotation;
                 @LockRotation.performed += instance.OnLockRotation;
                 @LockRotation.canceled += instance.OnLockRotation;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
         }
     }
@@ -858,5 +897,6 @@ public class @Inputs : IInputActionCollection, IDisposable
         void OnForwardBackward(InputAction.CallbackContext context);
         void OnLeftRight(InputAction.CallbackContext context);
         void OnLockRotation(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
 }

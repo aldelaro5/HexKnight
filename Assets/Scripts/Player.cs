@@ -31,12 +31,16 @@ public class Player : MonoBehaviour
   private WaitForSeconds movementDelay;
   private WaitForSeconds attackShieldDelay;
 
+  private Action<InputAction.CallbackContext> attackCallback;
+  private Action<InputAction.CallbackContext> shieldCallback;
+  private Action<InputAction.CallbackContext> pauseCallback;
+
   private Vector2Int currentTile;
   public Vector2Int Tile { get => currentTile; }
 
+  private GameManager gameManager;
   private LevelGenerator lvlGenerator;
   private PlayerInput playerInput;
-  private Inputs inputs;
   private Animator animator;
   private bool isMoving = false;
   private bool isTurning = false;
@@ -47,11 +51,14 @@ public class Player : MonoBehaviour
 
   private void Awake()
   {
-    inputs = new Inputs();
-    inputs.UI.Disable();
-    inputs.Player.Enable();
-    inputs.Player.Attack.performed += x => OnAttackInput(x);
-    inputs.Player.Shield.performed += x => OnShieldInput(x);
+    attackCallback = x => OnAttackInput(x);
+    shieldCallback = x => OnShieldInput(x);
+    pauseCallback = x => OnPauseInput(x);
+
+    gameManager = FindObjectOfType<GameManager>();
+    gameManager.Inputs.Player.Attack.performed += attackCallback;
+    gameManager.Inputs.Player.Shield.performed += shieldCallback;
+    gameManager.Inputs.Player.Pause.performed += pauseCallback;
     animator = GetComponent<Animator>();
     audioSource = GetComponent<AudioSource>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
@@ -60,12 +67,22 @@ public class Player : MonoBehaviour
     attackShieldDelay = new WaitForSeconds(attackCooldownInSeconds);
   }
 
+  public void UnhookInputEvents()
+  {
+    gameManager.Inputs.Player.Attack.performed -= attackCallback;
+    gameManager.Inputs.Player.Shield.performed -= shieldCallback;
+    gameManager.Inputs.Player.Pause.performed -= pauseCallback;
+  }
+
+  private void OnPauseInput(InputAction.CallbackContext ctx)
+  {
+    gameManager.Pause();
+  }
+
   private bool IsBusy()
   {
     return (isMoving || isTurning || isAttacking || isShielding);
   }
-
-
 
   private void Update()
   {
@@ -73,13 +90,13 @@ public class Player : MonoBehaviour
       return;
 
     hoverObject.transform.localRotation = Quaternion.identity;
-    
+
     ProcessMovementInputs();
   }
 
   private void ProcessMovementInputs()
   {
-    if (inputs.Player.ForwardBackward.ReadValue<float>() == 1)
+    if (gameManager.Inputs.Player.ForwardBackward.ReadValue<float>() == 1)
     {
       Vector3 destVector = transform.position + transform.forward * lvlGenerator.TileSize;
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
@@ -90,7 +107,7 @@ public class Player : MonoBehaviour
         StartCoroutine(MoveToDestinationTile(destTile));
       }
     }
-    else if (inputs.Player.ForwardBackward.ReadValue<float>() == -1)
+    else if (gameManager.Inputs.Player.ForwardBackward.ReadValue<float>() == -1)
     {
       Vector3 destVector = transform.position - transform.forward * lvlGenerator.TileSize;
       Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
@@ -100,9 +117,9 @@ public class Player : MonoBehaviour
         StartCoroutine(MoveToDestinationTile(destTile));
       }
     }
-    else if (inputs.Player.LockRotation.ReadValue<float>() == 1)
+    else if (gameManager.Inputs.Player.LockRotation.ReadValue<float>() == 1)
     {
-      if (inputs.Player.LeftRight.ReadValue<float>() == 1)
+      if (gameManager.Inputs.Player.LeftRight.ReadValue<float>() == 1)
       {
         Vector3 destVector = transform.position + transform.right * lvlGenerator.TileSize;
         Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
@@ -112,7 +129,7 @@ public class Player : MonoBehaviour
           StartCoroutine(MoveToDestinationTile(destTile));
         }
       }
-      else if (inputs.Player.LeftRight.ReadValue<float>() == -1)
+      else if (gameManager.Inputs.Player.LeftRight.ReadValue<float>() == -1)
       {
         Vector3 destVector = transform.position + -transform.right * lvlGenerator.TileSize;
         Vector2Int destTile = lvlGenerator.Vec3CenterToTile(destVector);
@@ -125,9 +142,9 @@ public class Player : MonoBehaviour
     }
     else
     {
-      if (inputs.Player.LeftRight.ReadValue<float>() == 1)
+      if (gameManager.Inputs.Player.LeftRight.ReadValue<float>() == 1)
         StartCoroutine(TurnToAngleAroundY(90f));
-      else if (inputs.Player.LeftRight.ReadValue<float>() == -1)
+      else if (gameManager.Inputs.Player.LeftRight.ReadValue<float>() == -1)
         StartCoroutine(TurnToAngleAroundY(-90f));
     }
   }
