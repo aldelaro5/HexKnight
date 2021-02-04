@@ -38,7 +38,11 @@ public class KeyboardInputBinder : MonoBehaviour
 
   private void ResolveBindingInfoFromIndex(int i, out InputAction action, out int bindingIndex)
   {
-    action = gameManager.Inputs.FirstOrDefault(x => x.id == bindings[i].actionRef.ToInputAction().id);
+    if (bindings[i].actionRef.ToInputAction().actionMap.name == "UI")
+      action = bindings[i].actionRef.ToInputAction();
+    else
+      action = gameManager.Inputs.FirstOrDefault(x => x.id == bindings[i].actionRef.ToInputAction().id);
+
     if (string.IsNullOrEmpty(action.name))
       throw new Exception("Cannot find action for name " + bindings[i].actionRef.ToInputAction().name);
 
@@ -60,7 +64,7 @@ public class KeyboardInputBinder : MonoBehaviour
                           bindings[i].actionRef.ToInputAction().name);
     }
 
-    bindingIndex = inputBindings.IndexOf(theBinding);
+    bindingIndex = inputBindings.FindIndex(x => x.id == theBinding.id);
   }
 
   public void InteractiveRebind()
@@ -69,6 +73,8 @@ public class KeyboardInputBinder : MonoBehaviour
     int bindingIndex;
     ResolveBindingInfoFromIndex(0, out action, out bindingIndex);
     var rebindingOp = action.PerformInteractiveRebinding(bindingIndex);
+    rebindingOp.OnMatchWaitForAnother(10);
+    rebindingOp.WithCancelingThrough("<Keyboard>/escape");
     rebindingOp.OnCancel(x =>
     {
       rebindingOp.Dispose();

@@ -187,7 +187,7 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""path"": ""<Gamepad>/dpad/down"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Gamepad"",
                     ""action"": ""Navigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -198,7 +198,7 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""path"": ""<Gamepad>/dpad/left"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Gamepad"",
                     ""action"": ""Navigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -209,7 +209,7 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Gamepad"",
                     ""action"": ""Navigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
@@ -425,7 +425,7 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""Direction Dpad"",
+                    ""name"": ""Dpad"",
                     ""id"": ""6c0a6620-e963-439b-a3bd-c3b24f1c858f"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
@@ -458,7 +458,7 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""Direction Stick"",
+                    ""name"": ""Stick"",
                     ""id"": ""b68d025f-d024-43a1-897d-c39a39a6a1d2"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
@@ -524,7 +524,7 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""Direction Dpad"",
+                    ""name"": ""Dpad"",
                     ""id"": ""7a1c5f32-655f-4095-bf47-3141c45be7db"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
@@ -557,7 +557,7 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""Direction Stick"",
+                    ""name"": ""Stick"",
                     ""id"": ""10a90b99-9859-49cf-872f-3b381b48b578"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
@@ -654,6 +654,11 @@ public class @Inputs : IInputActionCollection, IDisposable
             ""devices"": [
                 {
                     ""devicePath"": ""<Gamepad>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                },
+                {
+                    ""devicePath"": ""<Joystick>"",
                     ""isOptional"": false,
                     ""isOR"": false
                 }
