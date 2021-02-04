@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
   [SerializeField] private UIManager uiManager;
   [SerializeField] private UIPage pausePage;
   [SerializeField] private UIPage mainMenuPage;
-  
+
   public Inputs Inputs { get => inputs; }
   private Inputs inputs;
 
@@ -24,7 +24,10 @@ public class GameManager : MonoBehaviour
     inputs = new Inputs();
     inputs.Player.Disable();
     inputs.UI.Enable();
-    mainCameraAudioListener = mainCamera.GetComponent<AudioListener>();
+    if (mainCamera != null)
+    {
+      mainCameraAudioListener = mainCamera.GetComponent<AudioListener>();
+    }
   }
 
   public void OnStartGame()

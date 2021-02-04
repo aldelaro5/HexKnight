@@ -56,6 +56,12 @@ public class Player : MonoBehaviour
     pauseCallback = x => OnPauseInput(x);
 
     gameManager = FindObjectOfType<GameManager>();
+    // If we are testing
+    if (gameManager == null)
+    {
+      gameManager = gameObject.AddComponent<GameManager>();
+      gameManager.Inputs.Player.Enable();
+    }
     gameManager.Inputs.Player.Attack.performed += attackCallback;
     gameManager.Inputs.Player.Shield.performed += shieldCallback;
     gameManager.Inputs.Player.Pause.performed += pauseCallback;
