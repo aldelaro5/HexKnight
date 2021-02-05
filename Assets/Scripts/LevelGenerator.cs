@@ -78,6 +78,7 @@ public class LevelGenerator : MonoBehaviour
   [SerializeField] private GameObject dataLinePrefab;
 
   private GameObject player = null;
+  public GameObject Player { get => player; }
   private GameManager game;
 
   private Vector3 tileScaleVec;

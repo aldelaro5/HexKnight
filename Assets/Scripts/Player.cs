@@ -14,7 +14,8 @@ public class Player : MonoBehaviour
   [SerializeField] private int nbrIFrames = 60;
   [SerializeField] private int nbrShieldFrames = 120;
   [SerializeField] private float attackCooldownInSeconds = 1f;
-  [SerializeField] private int hp = 5;
+  [SerializeField] private int hp;
+  [SerializeField] private int maxHp = 5;
   [SerializeField] private AudioClip moveSfx;
   [SerializeField] private AudioClip attackSfx;
   [SerializeField] private AudioClip dataLinesSfx;
@@ -24,6 +25,9 @@ public class Player : MonoBehaviour
   [SerializeField] private ParticleSystem shieldVFX;
   [SerializeField] private GameObject shieldObject;
   [SerializeField] private GameObject hoverObject;
+
+  public int Hp { get => hp; }
+  public int MaxHp { get => maxHp; }
 
   private AudioSource audioSource;
 
@@ -51,6 +55,7 @@ public class Player : MonoBehaviour
 
   private void Awake()
   {
+    hp = maxHp;
     attackCallback = x => OnAttackInput(x);
     shieldCallback = x => OnShieldInput(x);
     pauseCallback = x => OnPauseInput(x);
@@ -215,6 +220,7 @@ public class Player : MonoBehaviour
 
     animator.SetTrigger("TakeDamage");
     hp -= dmg;
+    gameManager.UpdateHUD();
     if (hp <= 0)
     {
       audioSource.PlayOneShot(deathSfx);
