@@ -211,7 +211,7 @@ public class Player : MonoBehaviour
 
   private void Die()
   {
-    Destroy(gameObject);
+    StartCoroutine(gameManager.GameOver());
   }
 
   private IEnumerator ReceiveHit(int dmg)

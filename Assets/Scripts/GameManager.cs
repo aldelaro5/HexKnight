@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -74,6 +75,30 @@ public class GameManager : MonoBehaviour
     currentLevelIndex++;
     if (currentLevelIndex < levels.Length)
       generator.GenerateLevel(levels[currentLevelIndex]);
+    else
+      StartCoroutine(EndGame());
+  }
+
+  private IEnumerator EndGame()
+  {
+    hud.gameObject.SetActive(false);
+    StartCoroutine(uiManager.FadeOut(false));
+    while (uiManager.Fading)
+      yield return null;
+    StartCoroutine(uiManager.FadeIn(true));
+    OnReturnToMainMenu();
+    yield break;
+  }
+
+  public IEnumerator GameOver()
+  {
+    hud.gameObject.SetActive(false);
+    StartCoroutine(uiManager.FadeOut(false));
+    while (uiManager.Fading)
+      yield return null;
+    StartCoroutine(uiManager.FadeIn(true));
+    OnReturnToMainMenu();
+    yield break;
   }
 
   public void Pause()
@@ -95,7 +120,6 @@ public class GameManager : MonoBehaviour
   public void OnReturnToMainMenu()
   {
     Destroy(generator.gameObject);
-    Player player = FindObjectOfType<Player>();
     player.UnhookInputEvents();
     Destroy(player.gameObject);
     currentLevelIndex = 0;
@@ -103,6 +127,8 @@ public class GameManager : MonoBehaviour
     mainCamera.enabled = true;
     hud.gameObject.SetActive(false);
     uiManager.ChangePage(mainMenuPage);
+    inputs.Player.Disable();
+    inputs.UI.Enable();
     Time.timeScale = 1f;
   }
 
