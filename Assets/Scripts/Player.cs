@@ -23,9 +23,13 @@ public class Player : MonoBehaviour
   [SerializeField] private AudioClip deathSfx;
   [SerializeField] private ParticleSystem atkVFX;
   [SerializeField] private ParticleSystem shieldVFX;
+  [SerializeField] private ParticleSystem deathVFX;
   [SerializeField] private GameObject shieldObject;
   [SerializeField] private GameObject hoverObject;
+  [SerializeField] private Camera mainCamera;
+  [SerializeField] private GameObject knightObj;
 
+  public Camera MainCamera { get => mainCamera; }
   public int Hp { get => hp; }
   public int MaxHp { get => maxHp; }
 
@@ -209,9 +213,15 @@ public class Player : MonoBehaviour
     yield break;
   }
 
-  private void Die()
+  private IEnumerator Die()
   {
+    gameManager.Inputs.Player.Disable();
+    knightObj.SetActive(false);
+    deathVFX.Play();
+    audioSource.PlayOneShot(deathSfx);
+    yield return new WaitForSeconds(2);
     StartCoroutine(gameManager.GameOver());
+    yield break;
   }
 
   private IEnumerator ReceiveHit(int dmg)
@@ -224,7 +234,7 @@ public class Player : MonoBehaviour
     if (hp <= 0)
     {
       audioSource.PlayOneShot(deathSfx);
-      Die();
+      StartCoroutine(Die());
     }
     else
     {

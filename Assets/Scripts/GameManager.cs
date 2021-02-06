@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
   [SerializeField] private UIManager uiManager;
   [SerializeField] private UIPage pausePage;
   [SerializeField] private UIPage mainMenuPage;
+  [SerializeField] private UIPage endGamePage;
+  [SerializeField] private UIPage gameOverPage;
+  [SerializeField] private HUD hud;
 
   public Inputs Inputs { get => inputs; }
   private Inputs inputs;
@@ -23,7 +26,6 @@ public class GameManager : MonoBehaviour
   private int score = 0;
   public int Score { get => score; }
   private AudioListener mainCameraAudioListener;
-  private HUD hud;
 
   private void Awake()
   {
@@ -32,8 +34,6 @@ public class GameManager : MonoBehaviour
     inputs.UI.Enable();
     if (mainCamera != null)
       mainCameraAudioListener = mainCamera.GetComponent<AudioListener>();
-    if (mainMenu != null)
-      hud = mainMenu.transform.Find("HUD").GetComponent<HUD>();
   }
 
   public void OnStartGame()
@@ -85,8 +85,20 @@ public class GameManager : MonoBehaviour
     StartCoroutine(uiManager.FadeOut(false));
     while (uiManager.Fading)
       yield return null;
+    Destroy(generator.gameObject);
+    uiManager.ChangePage(endGamePage);
+    player.MainCamera.gameObject.SetActive(false);
+    mainCameraAudioListener.enabled = true;
+    mainCamera.enabled = true;
     StartCoroutine(uiManager.FadeIn(true));
+    inputs.UI.Enable();
+    while (inputs.UI.Submit.ReadValue<float>() == 0)
+      yield return null;
+    StartCoroutine(uiManager.FadeOut(false));
+    while (uiManager.Fading)
+      yield return null;
     OnReturnToMainMenu();
+    StartCoroutine(uiManager.FadeIn(true));
     yield break;
   }
 
@@ -96,8 +108,18 @@ public class GameManager : MonoBehaviour
     StartCoroutine(uiManager.FadeOut(false));
     while (uiManager.Fading)
       yield return null;
+    Destroy(generator.gameObject);
+    uiManager.ChangePage(gameOverPage);
+    player.MainCamera.gameObject.SetActive(false);
+    mainCameraAudioListener.enabled = true;
+    mainCamera.enabled = true;
     StartCoroutine(uiManager.FadeIn(true));
+    yield return new WaitForSeconds(2);
+    StartCoroutine(uiManager.FadeOut(false));
+    while (uiManager.Fading)
+      yield return null;
     OnReturnToMainMenu();
+    StartCoroutine(uiManager.FadeIn(true));
     yield break;
   }
 
@@ -119,7 +141,6 @@ public class GameManager : MonoBehaviour
 
   public void OnReturnToMainMenu()
   {
-    Destroy(generator.gameObject);
     player.UnhookInputEvents();
     Destroy(player.gameObject);
     currentLevelIndex = 0;
