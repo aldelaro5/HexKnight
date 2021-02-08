@@ -15,23 +15,31 @@ public class GameManager : MonoBehaviour
   [SerializeField] private UIPage endGamePage;
   [SerializeField] private UIPage gameOverPage;
   [SerializeField] private HUD hud;
+  [SerializeField] private float timeLimitSeconds = 300;
+  [SerializeField] private int pointsOnHit = 50;
+  [SerializeField] private int pointsOnKill = 100;
+  [SerializeField] private int pointsOnExitUnlock = 500;
+  [SerializeField] private int pointsPerHPLeft = 300;
+  [SerializeField] private int pointsPerSecondsLeft = 20;
 
-  public Inputs Inputs { get => inputs; }
-  private Inputs inputs;
+  public Inputs Inputs { get; private set; }
 
   private LevelGenerator generator;
-  private Player player;
-  public Player Player { get => player; }
+  public Player Player { get; private set; }
+  public int Score { get; private set; }
+  public float TimeLeft { get; private set; }
+  public string strTimeLeft { get => (int)Mathf.Floor(TimeLeft / 60) + ":" + Mathf.Floor(TimeLeft) % 60; }
+  public int nbrEnemyKilled { get; private set; }
+
+  private bool inGame = false;
   private int currentLevelIndex = 0;
-  private int score = 0;
-  public int Score { get => score; }
   private AudioListener mainCameraAudioListener;
 
   private void Awake()
   {
-    inputs = new Inputs();
-    inputs.Player.Disable();
-    inputs.UI.Enable();
+    Inputs = new Inputs();
+    Inputs.Player.Disable();
+    Inputs.UI.Enable();
     if (mainCamera != null)
       mainCameraAudioListener = mainCamera.GetComponent<AudioListener>();
   }
@@ -39,7 +47,9 @@ public class GameManager : MonoBehaviour
   public void OnStartGame()
   {
     currentLevelIndex = 0;
-    score = 0;
+    Score = 0;
+    nbrEnemyKilled = 0;
+    TimeLeft = timeLimitSeconds;
     GameObject go = Instantiate(levelPrefab, Vector3.zero, Quaternion.identity, transform);
     go.name = "Level";
     generator = go.GetComponent<LevelGenerator>();
@@ -50,15 +60,46 @@ public class GameManager : MonoBehaviour
     mainCamera.enabled = false;
     hud.gameObject.SetActive(true);
     uiManager.ChangePage(null);
-    inputs.Player.Enable();
-    inputs.UI.Disable();
-    player = generator.Player.GetComponent<Player>();
+    Inputs.Player.Enable();
+    Inputs.UI.Disable();
+    Player = generator.Player.GetComponent<Player>();
     hud.UpdateDisplay();
+    inGame = true;
   }
 
-  public void AddScore(int pointsToAdd)
+  private void Update()
   {
-    score += pointsToAdd;
+    if (inGame)
+    {
+      TimeLeft -= Time.deltaTime;
+      if (TimeLeft <= 0)
+      {
+        TimeLeft = 0;
+        GameOver();
+      }
+      hud.UpdateDisplay();
+    }
+  }
+
+  public void HitEnemy()
+  {
+    AddScore(pointsOnHit);
+  }
+
+  public void KilledEnemy()
+  {
+    nbrEnemyKilled++;
+    AddScore(pointsOnKill);
+  }
+
+  public void ExitUnlocked()
+  {
+    AddScore(pointsOnExitUnlock);
+  }
+
+  private void AddScore(int pointsToAdd)
+  {
+    Score += pointsToAdd;
     hud.UpdateDisplay();
   }
 
@@ -81,36 +122,55 @@ public class GameManager : MonoBehaviour
 
   private IEnumerator EndGame()
   {
+    inGame = false;
     hud.gameObject.SetActive(false);
     StartCoroutine(uiManager.FadeOut(false));
     while (uiManager.Fading)
       yield return null;
+
     Destroy(generator.gameObject);
+    ScorePage scorePage = endGamePage.GetComponent<ScorePage>();
+    CalculateFinalScore();
+    scorePage.ResetPage();
     uiManager.ChangePage(endGamePage);
-    player.MainCamera.gameObject.SetActive(false);
+    Player.MainCamera.gameObject.SetActive(false);
     mainCameraAudioListener.enabled = true;
     mainCamera.enabled = true;
     StartCoroutine(uiManager.FadeIn(true));
-    inputs.UI.Enable();
-    while (inputs.UI.Submit.ReadValue<float>() == 0)
+
+    StartCoroutine(scorePage.ShowPage());
+    while (!scorePage.isDone)
       yield return null;
+
+    Inputs.UI.Enable();
+    while (Inputs.UI.Submit.ReadValue<float>() == 0)
+      yield return null;
+
     StartCoroutine(uiManager.FadeOut(false));
     while (uiManager.Fading)
       yield return null;
+
     OnReturnToMainMenu();
     StartCoroutine(uiManager.FadeIn(true));
     yield break;
   }
 
+  private void CalculateFinalScore()
+  {
+    Score += pointsPerHPLeft * Player.Hp;
+    Score += pointsPerSecondsLeft * (int)Mathf.Floor(TimeLeft);
+  }
+
   public IEnumerator GameOver()
   {
+    inGame = false;
     hud.gameObject.SetActive(false);
     StartCoroutine(uiManager.FadeOut(false));
     while (uiManager.Fading)
       yield return null;
     Destroy(generator.gameObject);
     uiManager.ChangePage(gameOverPage);
-    player.MainCamera.gameObject.SetActive(false);
+    Player.MainCamera.gameObject.SetActive(false);
     mainCameraAudioListener.enabled = true;
     mainCamera.enabled = true;
     StartCoroutine(uiManager.FadeIn(true));
@@ -126,30 +186,31 @@ public class GameManager : MonoBehaviour
   public void Pause()
   {
     Time.timeScale = 0f;
-    inputs.Player.Disable();
-    inputs.UI.Enable();
+    Inputs.Player.Disable();
+    Inputs.UI.Enable();
     uiManager.ChangePage(pausePage);
   }
 
   public void OnUnpause()
   {
     uiManager.ChangePage(null);
-    inputs.Player.Enable();
-    inputs.UI.Disable();
+    Inputs.Player.Enable();
+    Inputs.UI.Disable();
     Time.timeScale = 1f;
   }
 
   public void OnReturnToMainMenu()
   {
-    player.UnhookInputEvents();
-    Destroy(player.gameObject);
+    inGame = false;
+    Player.UnhookInputEvents();
+    Destroy(Player.gameObject);
     currentLevelIndex = 0;
     mainCameraAudioListener.enabled = true;
     mainCamera.enabled = true;
     hud.gameObject.SetActive(false);
     uiManager.ChangePage(mainMenuPage);
-    inputs.Player.Disable();
-    inputs.UI.Enable();
+    Inputs.Player.Disable();
+    Inputs.UI.Enable();
     Time.timeScale = 1f;
   }
 

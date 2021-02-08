@@ -135,6 +135,7 @@ public class LevelGenerator : MonoBehaviour
         }
       }
     }
+    game.ExitUnlocked();
   }
 
   public void ExitReached()

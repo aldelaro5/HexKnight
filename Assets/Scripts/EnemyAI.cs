@@ -19,8 +19,6 @@ public class EnemyAI : MonoBehaviour
   [SerializeField] private float attackCooldownInSeconds = 1f;
   [SerializeField] private int nbrIFrames = 60;
   [SerializeField] private int hp = 2;
-  [SerializeField] private int pointsOnHit = 50;
-  [SerializeField] private int pointsOnKill = 500;
 
   private Animator animator;
   private AudioSource audioSource;
@@ -163,11 +161,11 @@ public class EnemyAI : MonoBehaviour
 
     animator.SetTrigger("TakeDamage");
     hp -= dmg;
-    gameManager.AddScore(pointsOnHit);
+    gameManager.HitEnemy();
     if (hp <= 0)
     {
       audioSource.PlayOneShot(deathSfx);
-      gameManager.AddScore(pointsOnKill);
+      gameManager.KilledEnemy();
       Die();
     }
     else
