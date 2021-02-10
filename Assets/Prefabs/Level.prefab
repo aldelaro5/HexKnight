@@ -55,6 +55,7 @@ MonoBehaviour:
     MinEndRoomSize: {x: 2, y: 2}
     MaxEndRoomSize: {x: 2, y: 2}
     nbrEnemies: 3
+    likelyhoodTurret: 0.25
   floorMaterial: {fileID: 2100000, guid: 78ff7eb4350dbbcf98ff63fd29db3dfc, type: 2}
   corridorMaterial: {fileID: 2100000, guid: 2eaafaea22933d8dd88d246470644c41, type: 2}
   roomMaterial: {fileID: 2100000, guid: 4e0beb282cf30b1f3b452d78da544157, type: 2}
@@ -64,6 +65,7 @@ MonoBehaviour:
   roomPrefab: {fileID: 6243778842003243801, guid: 680a523c285e88994a58d1fde1746b9f, type: 3}
   corridorPrefab: {fileID: 8435076937535421658, guid: aa8616ee911962045905c0a6f672b489, type: 3}
   enemyPrefab: {fileID: 8600829949028676582, guid: d9620f7c8052770b78095659708d4339, type: 3}
+  turretPrefab: {fileID: 8600829949028676582, guid: 32cb642ad39e52a8091ebd88862538a3, type: 3}
   playerPrefab: {fileID: 4537163831860084823, guid: 65c78d939cfd1d2b899e70a8f37236ea, type: 3}
   collectiblePrefab: {fileID: 1113497764221088807, guid: b47cb77e3d37e729099a12b04ec2b73e, type: 3}
   dataLinePrefab: {fileID: 6355836802393777271, guid: 910afb9eec27992e092c77b9ab7da911, type: 3}

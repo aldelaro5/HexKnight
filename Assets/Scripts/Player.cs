@@ -247,6 +247,11 @@ public class Player : MonoBehaviour
     yield break;
   }
 
+  private void OnParticleCollision(GameObject other)
+  {
+    GotAttacked(1);
+  }
+
   public void GotAttacked(int dmg)
   {
     triggerStopShield = true;

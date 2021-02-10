@@ -12,7 +12,7 @@ public class EnemyAI : MonoBehaviour
   [SerializeField] AudioClip zapSfx;
   [SerializeField] AudioClip tookDamageSfx;
   [SerializeField] AudioClip deathSfx;
-  [SerializeField] MeshRenderer MainMesh;
+  [SerializeField] GameObject MainMesh;
   [SerializeField] [Min(0.01f)] private float movementSpeed = 1f;
   [SerializeField] private int tilesAttackRange = 3;
   [SerializeField] private float idleTimeInSeconds = 5f;

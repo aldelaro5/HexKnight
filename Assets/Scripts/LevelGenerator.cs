@@ -73,6 +73,7 @@ public class LevelGenerator : MonoBehaviour
   [SerializeField] private GameObject roomPrefab;
   [SerializeField] private GameObject corridorPrefab;
   [SerializeField] private GameObject enemyPrefab;
+  [SerializeField] private GameObject turretPrefab;
   [SerializeField] private GameObject playerPrefab;
   [SerializeField] private GameObject collectiblePrefab;
   [SerializeField] private GameObject dataLinePrefab;
@@ -640,7 +641,10 @@ public class LevelGenerator : MonoBehaviour
         switch (obj)
         {
           case TileObj.Enemy:
-            prefabObj = enemyPrefab;
+            if (Random.Range(0f, 1f - Mathf.Epsilon) < levelParams.likelyhoodTurret)
+              prefabObj = turretPrefab;
+            else
+              prefabObj = enemyPrefab;
             break;
           case TileObj.ExitUnlocker:
             prefabObj = collectiblePrefab;

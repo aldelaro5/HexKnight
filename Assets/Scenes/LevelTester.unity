@@ -20,7 +20,7 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 2.572549, g: 2.572549, b: 2.572549, a: 1}
+  m_AmbientSkyColor: {r: 0.72058314, g: 0.72058314, b: 0.72058314, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
@@ -224,6 +224,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
+      propertyPath: enemyPrefab
+      value: 
+      objectReference: {fileID: 8600829949028676582, guid: 32cb642ad39e52a8091ebd88862538a3, type: 3}
+    - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: levelParams.tileSize
       value: 3
       objectReference: {fileID: 0}
@@ -246,6 +250,10 @@ PrefabInstance:
     - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: levelParams.MaxRoomSize.y
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
+      propertyPath: levelParams.likelyhoodTurret
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: levelParams.prefferedMinNbrRoom

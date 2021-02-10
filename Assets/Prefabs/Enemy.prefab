@@ -14392,6 +14392,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6371703853504252821}
+  - component: {fileID: 2652133248813351879}
   m_Layer: 0
   m_Name: Chip
   m_TagString: Untagged
@@ -14421,6 +14422,19 @@ Transform:
   m_Father: {fileID: 9176180830369573257}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2652133248813351879
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3176524634466512134}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2, z: 1}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &3750503028585480837
 GameObject:
   m_ObjectHideFlags: 0
@@ -29461,7 +29475,7 @@ MonoBehaviour:
   zapSfx: {fileID: 8300000, guid: 245d316b7aaf10046b188b476cb7afd3, type: 3}
   tookDamageSfx: {fileID: 8300000, guid: 2e97729b3b8c8e9d587719c0213c61e2, type: 3}
   deathSfx: {fileID: 8300000, guid: b7d78a593e94399b796d5c1ff1b7c2ca, type: 3}
-  MainMesh: {fileID: 0}
+  MainMesh: {fileID: 3176524634466512134}
   movementSpeed: 10
   tilesAttackRange: 3
   idleTimeInSeconds: 2

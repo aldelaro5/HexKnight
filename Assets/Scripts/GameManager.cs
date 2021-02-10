@@ -28,7 +28,11 @@ public class GameManager : MonoBehaviour
   public Player Player { get; private set; }
   public int Score { get; private set; }
   public float TimeLeft { get; private set; }
-  public string strTimeLeft { get => (int)Mathf.Floor(TimeLeft / 60) + ":" + Mathf.Floor(TimeLeft) % 60; }
+  public string strTimeLeft 
+  { 
+    get => (int)Mathf.Floor(TimeLeft / 60) + ":" + 
+           (Mathf.Floor(TimeLeft) % 60).ToString().PadLeft(2,'0'); 
+  }
   public int nbrEnemyKilled { get; private set; }
 
   private bool inGame = false;
@@ -69,7 +73,7 @@ public class GameManager : MonoBehaviour
 
   private void Update()
   {
-    if (inGame)
+    if (inGame && mainCamera != null)
     {
       TimeLeft -= Time.deltaTime;
       if (TimeLeft <= 0)
@@ -99,13 +103,17 @@ public class GameManager : MonoBehaviour
 
   private void AddScore(int pointsToAdd)
   {
-    Score += pointsToAdd;
-    hud.UpdateDisplay();
+    if (hud != null)
+    {
+      Score += pointsToAdd;
+      hud.UpdateDisplay();
+    }
   }
 
   public void UpdateHUD()
   {
-    hud.UpdateDisplay();
+    if (hud != null)
+      hud.UpdateDisplay();
   }
 
   public void GoToNextLevel()
