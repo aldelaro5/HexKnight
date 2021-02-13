@@ -123,7 +123,7 @@ public class EnemyAI : MonoBehaviour
 
   private void AIAttack()
   {
-    audioSource.PlayOneShot(zapSfx);
+    audioSource.PlayOneShot(zapSfx, gameManager.Settings.sfxVolume);
     atkVFX.Play();
     playerMovement.GotAttacked(1);
     idlingCoroutine = StartCoroutine(WaitToAttack());
@@ -164,7 +164,7 @@ public class EnemyAI : MonoBehaviour
     gameManager.HitEnemy();
     if (hp <= 0)
     {
-      audioSource.PlayOneShot(deathSfx);
+      audioSource.PlayOneShot(deathSfx, gameManager.Settings.sfxVolume);
       gameManager.KilledEnemy();
       Die();
     }

@@ -38,10 +38,7 @@ public class ControllerRebinder : MonoBehaviour
   private void ResolveBindingInfo(int groupIndex, int index, out InputAction action, out int bindingIndex)
   {
     Binding binding = bindingsGroups[groupIndex].bindings[index];
-    if (binding.actionRef.ToInputAction().actionMap.name == "UI")
-      action = binding.actionRef.ToInputAction();
-    else
-      action = gameManager.Inputs.FirstOrDefault(x => x.id == binding.actionRef.ToInputAction().id);
+    action = gameManager.Inputs.FirstOrDefault(x => x.id == binding.actionRef.ToInputAction().id);
     
     if (string.IsNullOrEmpty(action.name))
       throw new Exception("Cannot find action for name " + binding.actionRef.ToInputAction().name);

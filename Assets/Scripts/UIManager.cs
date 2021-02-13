@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -16,10 +18,19 @@ public class UIManager : MonoBehaviour
   private bool fading = false;
 
   private EventSystem evtSystem;
+  private InputSystemUIInputModule uiInputModule;
+  private GameManager gameManager;
 
   private void Awake()
   {
     evtSystem = EventSystem.current;
+    gameManager = FindObjectOfType<GameManager>();
+    uiInputModule = evtSystem.GetComponent<InputSystemUIInputModule>();
+    uiInputModule.point = InputActionReference.Create(gameManager.Inputs.UI.Point);
+    uiInputModule.move = InputActionReference.Create(gameManager.Inputs.UI.Navigate);
+    uiInputModule.submit = InputActionReference.Create(gameManager.Inputs.UI.Submit);
+    uiInputModule.leftClick = InputActionReference.Create(gameManager.Inputs.UI.Click);
+    uiInputModule.cancel = InputActionReference.Create(gameManager.Inputs.UI.Cancel);
   }
 
   public IEnumerator FadeOut(bool instant)

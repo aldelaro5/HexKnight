@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum Direction
@@ -25,4 +26,20 @@ public class LevelGeneratorParams
   public Vector2Int MaxEndRoomSize;
   public int nbrEnemies = 3;
   public float likelyhoodTurret = 0.25f;
+}
+
+[Serializable]
+public class bindingOverrideSetting
+{
+  public string id;
+  public string overridePath;
+}
+
+[Serializable]
+public class Settings
+{
+  public float musicVolume = 1f;
+  public float sfxVolume = 1f;
+  public List<bindingOverrideSetting> bindingOverridesKb = new List<bindingOverrideSetting>();
+  public List<bindingOverrideSetting> bindingOverridesGamepad = new List<bindingOverrideSetting>();
 }

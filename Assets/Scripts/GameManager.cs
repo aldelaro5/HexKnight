@@ -1,7 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,13 +29,14 @@ public class GameManager : MonoBehaviour
   public Inputs Inputs { get; private set; }
 
   private LevelGenerator generator;
+  public Settings Settings { get; private set; }
   public Player Player { get; private set; }
   public int Score { get; private set; }
   public float TimeLeft { get; private set; }
-  public string strTimeLeft 
-  { 
-    get => (int)Mathf.Floor(TimeLeft / 60) + ":" + 
-           (Mathf.Floor(TimeLeft) % 60).ToString().PadLeft(2,'0'); 
+  public string strTimeLeft
+  {
+    get => (int)Mathf.Floor(TimeLeft / 60) + ":" +
+           (Mathf.Floor(TimeLeft) % 60).ToString().PadLeft(2, '0');
   }
   public int nbrEnemyKilled { get; private set; }
 
@@ -39,13 +44,57 @@ public class GameManager : MonoBehaviour
   private int currentLevelIndex = 0;
   private AudioListener mainCameraAudioListener;
 
+  private const string settingsFilename = "settings.json";
+
   private void Awake()
   {
     Inputs = new Inputs();
+    Settings = new Settings();
+    if (File.Exists(settingsFilename))
+      LoadSettings();
+
+    ApplyBindingsOverrides();
     Inputs.Player.Disable();
     Inputs.UI.Enable();
     if (mainCamera != null)
       mainCameraAudioListener = mainCamera.GetComponent<AudioListener>();
+  }
+
+  private void ApplyBindingsOverrides()
+  {
+    foreach (var item in Settings.bindingOverridesKb)
+    {
+      var binding = Inputs.SelectMany(x => x.bindings).FirstOrDefault(x => x.id.ToString() == item.id);
+      if (binding != null)
+      {
+        var action = Inputs.FirstOrDefault(x => x.bindings.Count(x => x.id.ToString() == item.id) > 0);
+        int index = action.bindings.IndexOf(x => x.id.ToString() == item.id); 
+        action.ApplyBindingOverride(index, item.overridePath);
+      }
+    }
+
+    foreach (var item in Settings.bindingOverridesGamepad)
+    {
+      var binding = Inputs.SelectMany(x => x.bindings).FirstOrDefault(x => x.id.ToString() == item.id); 
+      if (binding != null)
+      {
+        var action = Inputs.FirstOrDefault(x => x.bindings.Count(x => x.id.ToString() == item.id) > 0);
+        int index = action.bindings.IndexOf(x => x.id.ToString() == item.id); 
+        action.ApplyBindingOverride(index, item.overridePath);
+      }
+    }
+  }
+
+  private void LoadSettings()
+  {
+    string json = File.ReadAllText(settingsFilename);
+    Settings = JsonUtility.FromJson<Settings>(json);
+  }
+
+  public void WriteSettings()
+  {
+    string json = JsonUtility.ToJson(Settings, true);
+    File.WriteAllText(settingsFilename, json);
   }
 
   public void OnStartGame()

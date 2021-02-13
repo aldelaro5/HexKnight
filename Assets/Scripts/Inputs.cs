@@ -20,7 +20,7 @@ public class @Inputs : IInputActionCollection, IDisposable
             ""actions"": [
                 {
                     ""name"": ""Navigate"",
-                    ""type"": ""Value"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""aeebddab-c488-469c-9ef4-8a069364b379"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
@@ -28,7 +28,7 @@ public class @Inputs : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": ""Submit"",
-                    ""type"": ""Button"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""ea6aac5b-cbfa-4222-a3dc-b35efba05fd5"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
@@ -36,7 +36,7 @@ public class @Inputs : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": ""Cancel"",
-                    ""type"": ""Button"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""0e9ef0fd-8c91-4c7f-a780-4919c6c45374"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",

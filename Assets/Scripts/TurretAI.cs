@@ -119,7 +119,7 @@ public class TurretAI : MonoBehaviour
 
   private void AIAttack()
   {
-    audioSource.PlayOneShot(laserSfx);
+    audioSource.PlayOneShot(laserSfx, gameManager.Settings.sfxVolume);
     atkVFX.Play();
     idlingCoroutine = StartCoroutine(WaitToAttack());
   }
@@ -133,7 +133,7 @@ public class TurretAI : MonoBehaviour
     gameManager.HitEnemy();
     if (hp <= 0)
     {
-      audioSource.PlayOneShot(deathSfx);
+      audioSource.PlayOneShot(deathSfx, gameManager.Settings.sfxVolume);
       gameManager.KilledEnemy();
       Die();
     }

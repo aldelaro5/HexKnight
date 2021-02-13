@@ -10,9 +10,11 @@ public class ExitUnlocker : MonoBehaviour
   private LevelGenerator lvlGenerator;
   private Animator animator;
   private AudioSource audioSource;
+  private GameManager gameManager;
 
   private void Start()
   {
+    gameManager = FindObjectOfType<GameManager>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
     animator = GetComponent<Animator>();
     audioSource = GetComponent<AudioSource>();
@@ -20,13 +22,13 @@ public class ExitUnlocker : MonoBehaviour
 
   private void OnButtonPressed()
   {
-    audioSource.PlayOneShot(exitUnlockSfx);
+    audioSource.PlayOneShot(exitUnlockSfx, gameManager.Settings.sfxVolume);
     lvlGenerator.UnlockExit();
   }
 
   public void PressButton()
   {
-    audioSource.PlayOneShot(buttonPressedSfx);
+    audioSource.PlayOneShot(buttonPressedSfx, gameManager.Settings.sfxVolume);
     animator.SetTrigger("ExitUnlocked");
   } 
 }

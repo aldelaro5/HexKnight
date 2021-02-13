@@ -203,7 +203,7 @@ public class Player : MonoBehaviour
   private IEnumerator MoveIntoStart(Vector3 start)
   {
     isMoving = true;
-    audioSource.PlayOneShot(dataLinesSfx);
+    audioSource.PlayOneShot(dataLinesSfx, gameManager.Settings.sfxVolume);
     while (transform.position != start)
     {
       transform.position = Vector3.MoveTowards(transform.position, start, movementTransitionSpeed);
@@ -218,7 +218,7 @@ public class Player : MonoBehaviour
     gameManager.Inputs.Player.Disable();
     knightObj.SetActive(false);
     deathVFX.Play();
-    audioSource.PlayOneShot(deathSfx);
+    audioSource.PlayOneShot(deathSfx, gameManager.Settings.sfxVolume);
     yield return new WaitForSeconds(2);
     StartCoroutine(gameManager.GameOver());
     yield break;
@@ -233,12 +233,12 @@ public class Player : MonoBehaviour
     gameManager.UpdateHUD();
     if (hp <= 0)
     {
-      audioSource.PlayOneShot(deathSfx);
+      audioSource.PlayOneShot(deathSfx, gameManager.Settings.sfxVolume);
       StartCoroutine(Die());
     }
     else
     {
-      audioSource.PlayOneShot(tookDamageSfx);
+      audioSource.PlayOneShot(tookDamageSfx, gameManager.Settings.sfxVolume);
       for (int i = 0; i < nbrIFrames; i++)
         yield return null;
 
@@ -268,7 +268,7 @@ public class Player : MonoBehaviour
       lvlGenerator.ReserveTileAsPlayer(destinationTile, gameObject);
 
     Vector3 destVec = lvlGenerator.TileToVec3Center(destinationTile);
-    audioSource.PlayOneShot(moveSfx);
+    audioSource.PlayOneShot(moveSfx, gameManager.Settings.sfxVolume);
     while (transform.position != destVec)
     {
       transform.position = Vector3.MoveTowards(transform.position, destVec, Time.deltaTime * movementSpeed);
@@ -282,7 +282,7 @@ public class Player : MonoBehaviour
     if (toExit)
     {
       destVec = lvlGenerator.TileToVec3Center(new Vector2Int(destinationTile.x, destinationTile.y + 3));
-      audioSource.PlayOneShot(dataLinesSfx);
+      audioSource.PlayOneShot(dataLinesSfx, gameManager.Settings.sfxVolume);
       while (transform.position != destVec)
       {
         transform.position = Vector3.MoveTowards(transform.position, destVec, movementTransitionSpeed);
@@ -301,7 +301,7 @@ public class Player : MonoBehaviour
   {
     isAttacking = true;
     atkVFX.Play();
-    audioSource.PlayOneShot(attackSfx);
+    audioSource.PlayOneShot(attackSfx, gameManager.Settings.sfxVolume);
     if (lvlGenerator.GetTileInfo(destinationTile).state == LevelGenerator.TileState.Enemy)
     {
       GameObject objEnemy = lvlGenerator.GetTileInfo(destinationTile).obj;
