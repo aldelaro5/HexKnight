@@ -32,6 +32,7 @@ public class TurretAI : MonoBehaviour
   private bool isIdling = false;
   private bool onAttackCooldown = false;
   private bool isTakingDamage = false;
+  private bool isDying;
   private Coroutine idlingCoroutine;
   private Vector2Int currentTile;
 
@@ -66,7 +67,7 @@ public class TurretAI : MonoBehaviour
 
   void Update()
   {
-    if (onAttackCooldown)
+    if (onAttackCooldown || isDying)
       return;
 
     if (Math.Abs(currentTile.x - player.Tile.x) +
@@ -152,7 +153,9 @@ public class TurretAI : MonoBehaviour
     Destroy(MainMesh);
     deathVFX.Play();
     Destroy(gameObject, deathVFX.main.duration);
+    Destroy(this, deathVFX.main.duration);
     lvlGenerator.FreeTile(currentTile);
+    isDying = true;
   }
 
   private void GotAttacked(int dmg)

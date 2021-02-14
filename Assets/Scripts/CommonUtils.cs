@@ -26,6 +26,7 @@ public class LevelGeneratorParams
   public Vector2Int MaxEndRoomSize;
   public int nbrEnemies = 3;
   public float likelyhoodTurret = 0.25f;
+  public int nbrHealthDrops = 5;
 }
 
 [Serializable]

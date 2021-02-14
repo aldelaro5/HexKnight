@@ -241,7 +241,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: levelParams.nbrEnemies
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: levelParams.MaxRoomSize.x
@@ -253,7 +253,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: levelParams.likelyhoodTurret
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: levelParams.prefferedMinNbrRoom

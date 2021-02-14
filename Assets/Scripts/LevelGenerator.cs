@@ -19,7 +19,8 @@ public class LevelGenerator : MonoBehaviour
   {
     Nothing,
     Enemy,
-    ExitUnlocker
+    ExitUnlocker,
+    HealthDrop
   }
 
   public enum TileState
@@ -73,6 +74,7 @@ public class LevelGenerator : MonoBehaviour
   [SerializeField] private GameObject roomPrefab;
   [SerializeField] private GameObject corridorPrefab;
   [SerializeField] private GameObject enemyPrefab;
+  [SerializeField] private GameObject healthDropPrefab;
   [SerializeField] private GameObject turretPrefab;
   [SerializeField] private GameObject playerPrefab;
   [SerializeField] private GameObject collectiblePrefab;
@@ -205,8 +207,33 @@ public class LevelGenerator : MonoBehaviour
     GenerateCorridors();
     GenerateExitUnlocker();
     GenerateEnemies();
+    GenerateHealthDrops();
     GenerateLevelFromTiles();
     SetupPlayer();
+  }
+
+  private void GenerateHealthDrops()
+  {
+    for (int i = 0; i < levelParams.nbrHealthDrops; i++)
+    {
+      if (!IsAnyTileInRoomsFree())
+        break;
+
+      bool tileSelected = false;
+      int xPos = -1;
+      int yPos = -1;
+      while (!tileSelected)
+      {
+        // Never spawn in the start and end room
+        Room room = rooms[Random.Range(2, rooms.Count)];
+        xPos = Random.Range(room.posBottomLeft.x, room.posBottomLeft.x + room.size.x);
+        yPos = Random.Range(room.posBottomLeft.y, room.posBottomLeft.y + room.size.y);
+
+        if (levelTiles[xPos][yPos].tileObj == TileObj.Nothing)
+          tileSelected = true;
+      }
+      levelTiles[xPos][yPos].tileObj = TileObj.HealthDrop;
+    }
   }
 
   private void SetupPlayer()
@@ -649,6 +676,9 @@ public class LevelGenerator : MonoBehaviour
           case TileObj.ExitUnlocker:
             prefabObj = collectiblePrefab;
             tilesInfo[i][j].state = TileState.ExitUnlockerBlocked;
+            break;
+          case TileObj.HealthDrop:
+            prefabObj = healthDropPrefab;
             break;
           case TileObj.Nothing:
             break;

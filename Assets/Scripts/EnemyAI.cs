@@ -33,6 +33,7 @@ public class EnemyAI : MonoBehaviour
   private bool isMoving = false;
   private bool isIdling = false;
   private bool isTakingDamage = false;
+  private bool isDying = false;
   private Coroutine idlingCoroutine;
   private Vector2Int currentTile;
 
@@ -84,7 +85,7 @@ public class EnemyAI : MonoBehaviour
 
   void Update()
   {
-    if (isMoving)
+    if (isMoving || isDying)
       return;
 
     Direction dir = Direction.NONE;
@@ -183,7 +184,9 @@ public class EnemyAI : MonoBehaviour
     Destroy(MainMesh);
     deathVFX.Play();
     Destroy(gameObject, deathVFX.main.duration);
+    Destroy(this, deathVFX.main.duration);
     lvlGenerator.FreeTile(currentTile);
+    isDying = true;
   }
 
   private void GotAttacked(int dmg)

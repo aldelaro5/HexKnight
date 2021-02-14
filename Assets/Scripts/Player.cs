@@ -247,6 +247,12 @@ public class Player : MonoBehaviour
     yield break;
   }
 
+  public void Heal(int amount)
+  {
+    hp = Mathf.Clamp(hp + amount, 0, maxHp);
+    gameManager.UpdateHUD();
+  }
+
   private void OnParticleCollision(GameObject other)
   {
     GotAttacked(1);
