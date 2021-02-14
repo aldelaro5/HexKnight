@@ -5,6 +5,7 @@ using UnityEngine;
 public class HealthDrop : MonoBehaviour
 {
   private GameManager gameManager;
+  private bool alreadyHealed = false;
 
   private void Awake()
   {
@@ -13,11 +14,12 @@ public class HealthDrop : MonoBehaviour
 
   private void OnTouched(Collider other)
   {
-    if (other.CompareTag("Player"))
+    if (other.CompareTag("Player") && !alreadyHealed)
     {
       if (gameManager.Player.Hp < gameManager.Player.MaxHp)
       {
         gameManager.Player.Heal(1);
+        alreadyHealed = true;
         Destroy(gameObject);
       }
     }

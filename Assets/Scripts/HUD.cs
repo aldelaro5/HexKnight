@@ -9,6 +9,7 @@ public class HUD : MonoBehaviour
   [SerializeField] private TMP_Text hpText;
   [SerializeField] private TMP_Text maxHpText;
   [SerializeField] private TMP_Text timeLeftText;
+  [SerializeField] private TMP_Text levelText;
 
   private GameManager gameManager;
 
@@ -23,5 +24,6 @@ public class HUD : MonoBehaviour
     maxHpText.text = gameManager.Player.MaxHp.ToString();
     scoreText.text = gameManager.Score.ToString().PadLeft(6, '0');
     timeLeftText.text = gameManager.strTimeLeft;
+    levelText.text = (gameManager.currentLevelIndex + 1).ToString();
   }
 }

@@ -9,7 +9,15 @@ using UnityEngine.InputSystem.UI;
 
 public class GameManager : MonoBehaviour
 {
-  [SerializeField] private LevelGeneratorParams[] levels;
+  public enum GameMode
+  {
+    Standard,
+    LongPlay,
+    Endless,
+    Survival
+  }
+
+  [SerializeField] private LevelGeneratorParams[] standardModeLevels;
   [SerializeField] private GameObject levelPrefab;
   [SerializeField] private Camera mainCamera;
   [SerializeField] private Canvas mainMenu;
@@ -33,6 +41,8 @@ public class GameManager : MonoBehaviour
   public Player Player { get; private set; }
   public int Score { get; private set; }
   public float TimeLeft { get; private set; }
+  public GameMode gameMode { get; private set; }
+  public int currentLevelIndex { get; private set; } = 0;
   public string strTimeLeft
   {
     get => (int)Mathf.Floor(TimeLeft / 60) + ":" +
@@ -41,7 +51,6 @@ public class GameManager : MonoBehaviour
   public int nbrEnemyKilled { get; private set; }
 
   private bool inGame = false;
-  private int currentLevelIndex = 0;
   private AudioListener mainCameraAudioListener;
 
   private const string settingsFilename = "settings.json";
@@ -68,18 +77,18 @@ public class GameManager : MonoBehaviour
       if (binding != null)
       {
         var action = Inputs.FirstOrDefault(x => x.bindings.Count(x => x.id.ToString() == item.id) > 0);
-        int index = action.bindings.IndexOf(x => x.id.ToString() == item.id); 
+        int index = action.bindings.IndexOf(x => x.id.ToString() == item.id);
         action.ApplyBindingOverride(index, item.overridePath);
       }
     }
 
     foreach (var item in Settings.bindingOverridesGamepad)
     {
-      var binding = Inputs.SelectMany(x => x.bindings).FirstOrDefault(x => x.id.ToString() == item.id); 
+      var binding = Inputs.SelectMany(x => x.bindings).FirstOrDefault(x => x.id.ToString() == item.id);
       if (binding != null)
       {
         var action = Inputs.FirstOrDefault(x => x.bindings.Count(x => x.id.ToString() == item.id) > 0);
-        int index = action.bindings.IndexOf(x => x.id.ToString() == item.id); 
+        int index = action.bindings.IndexOf(x => x.id.ToString() == item.id);
         action.ApplyBindingOverride(index, item.overridePath);
       }
     }
@@ -107,7 +116,7 @@ public class GameManager : MonoBehaviour
     go.name = "Level";
     generator = go.GetComponent<LevelGenerator>();
 
-    generator.GenerateLevel(levels[0]);
+    generator.GenerateLevel(standardModeLevels[0]);
 
     mainCameraAudioListener.enabled = false;
     mainCamera.enabled = false;
@@ -128,7 +137,7 @@ public class GameManager : MonoBehaviour
       if (TimeLeft <= 0)
       {
         TimeLeft = 0;
-        GameOver();
+        StartCoroutine(GameOver());
       }
       hud.UpdateDisplay();
     }
@@ -171,8 +180,8 @@ public class GameManager : MonoBehaviour
       Destroy(item.gameObject);
 
     currentLevelIndex++;
-    if (currentLevelIndex < levels.Length)
-      generator.GenerateLevel(levels[currentLevelIndex]);
+    if (currentLevelIndex < standardModeLevels.Length)
+      generator.GenerateLevel(standardModeLevels[currentLevelIndex]);
     else
       StartCoroutine(EndGame());
   }
@@ -180,6 +189,7 @@ public class GameManager : MonoBehaviour
   private IEnumerator EndGame()
   {
     inGame = false;
+    Inputs.Player.Disable();
     hud.gameObject.SetActive(false);
     StartCoroutine(uiManager.FadeOut(false));
     while (uiManager.Fading)
@@ -221,10 +231,12 @@ public class GameManager : MonoBehaviour
   public IEnumerator GameOver()
   {
     inGame = false;
+    Inputs.Player.Disable();
     hud.gameObject.SetActive(false);
     StartCoroutine(uiManager.FadeOut(false));
     while (uiManager.Fading)
       yield return null;
+      
     Destroy(generator.gameObject);
     uiManager.ChangePage(gameOverPage);
     Player.MainCamera.gameObject.SetActive(false);
@@ -259,6 +271,9 @@ public class GameManager : MonoBehaviour
   public void OnReturnToMainMenu()
   {
     inGame = false;
+    Inputs.Player.Disable();
+    if (generator != null)
+      Destroy(generator.gameObject);
     Player.UnhookInputEvents();
     Destroy(Player.gameObject);
     currentLevelIndex = 0;
