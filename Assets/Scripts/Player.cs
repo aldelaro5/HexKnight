@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
   [SerializeField] private AudioClip dataLinesSfx;
   [SerializeField] private AudioClip tookDamageSfx;
   [SerializeField] private AudioClip deathSfx;
+  [SerializeField] private AudioClip dodgeSfx;
   [SerializeField] private ParticleSystem atkVFX;
   [SerializeField] private ParticleSystem shieldVFX;
   [SerializeField] private ParticleSystem deathVFX;
@@ -264,6 +265,9 @@ public class Player : MonoBehaviour
 
     if (!isTakingDamage && !isShielding)
       StartCoroutine(ReceiveHit(dmg));
+
+    if (isShielding)
+      audioSource.PlayOneShot(dodgeSfx, gameManager.Settings.sfxVolume);
   }
 
   private IEnumerator MoveToDestinationTile(Vector2Int destinationTile)

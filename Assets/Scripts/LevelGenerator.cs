@@ -46,6 +46,7 @@ public class LevelGenerator : MonoBehaviour
   {
     public Vector2Int size;
     public Vector2Int posBottomLeft;
+    public Direction dirFullyAlignedWithExitRoom;
   }
 
   private struct CorridorCandidate
@@ -90,6 +91,8 @@ public class LevelGenerator : MonoBehaviour
   private List<Room> rooms = new List<Room>();
   private Tile[][] levelTiles;
   private TileInfo[][] tilesInfo;
+  private int exitUnlockerRoomIndex;
+  private Vector2Int exitUnlockerPos;
 
   public int TileSize { get => levelParams.tileSize; }
 
@@ -204,8 +207,8 @@ public class LevelGenerator : MonoBehaviour
     halfTileSize = (float)levelParams.tileSize / 2f;
     InitialiseGenerator();
     GenerateRooms();
-    GenerateCorridors();
     GenerateExitUnlocker();
+    GenerateCorridors();
     GenerateEnemies();
     GenerateHealthDrops();
     GenerateLevelFromTiles();
@@ -254,9 +257,11 @@ public class LevelGenerator : MonoBehaviour
   private void GenerateExitUnlocker()
   {
     // Never spawn in the start and end room
-    Room room = rooms[Random.Range(2, rooms.Count)];
+    exitUnlockerRoomIndex = Random.Range(2, rooms.Count);
+    Room room = rooms[exitUnlockerRoomIndex];
     int xPos = Random.Range(room.posBottomLeft.x, room.posBottomLeft.x + room.size.x);
     int yPos = Random.Range(room.posBottomLeft.y, room.posBottomLeft.y + room.size.y);
+    exitUnlockerPos = new Vector2Int(xPos, yPos);
     levelTiles[xPos][yPos].tileObj = TileObj.ExitUnlocker;
   }
 
@@ -317,7 +322,8 @@ public class LevelGenerator : MonoBehaviour
         Room endRoomWithWall = new Room()
         {
           posBottomLeft = new Vector2Int(exitRoom.posBottomLeft.x - 1, exitRoom.posBottomLeft.y - 1),
-          size = new Vector2Int(exitRoom.size.x + 1, exitRoom.size.y + 1)
+          size = new Vector2Int(exitRoom.size.x + 1, exitRoom.size.y + 1),
+          dirFullyAlignedWithExitRoom = Direction.NONE
         };
         possibleCorridors = FindAllPossibleCorridorsForRoom(endRoomWithWall);
       }
@@ -326,12 +332,52 @@ public class LevelGenerator : MonoBehaviour
         possibleCorridors = FindAllPossibleCorridorsForRoom(rooms[i]);
       }
 
+      if (i == exitUnlockerRoomIndex)
+      {
+        possibleCorridors.RemoveAll(corridor => (Math.Abs(corridor.pos.x - exitUnlockerPos.x) == 1 &&
+                                                    corridor.pos.y == exitUnlockerPos.y) ||
+                                                (Math.Abs(corridor.pos.y - exitUnlockerPos.y) == 1 &&
+                                                    corridor.pos.x == exitUnlockerPos.x));
+      }
+
       var nbrTilesLongestCorridor = possibleCorridors.Max(x => x.tiles.Count);
       var longestCorridors = possibleCorridors.Where(x => x.tiles.Count == nbrTilesLongestCorridor).ToArray();
       CorridorCandidate chosenCorridor = longestCorridors[Random.Range(0, longestCorridors.Length)];
 
       foreach (var tilePos in chosenCorridor.tiles)
         levelTiles[tilePos.x][tilePos.y].tileType = TileType.Corridor;
+
+      // There are 2 special cases in which we want another corridor that is perpendicular
+      // to the first one: if it's the start room or if the room is aligned with the exit
+      // and its corridor is paralell to the direction of alignement
+      Direction secondCorridorDir = Direction.NONE;
+      if (i == 0)
+      {
+        if (chosenCorridor.direction == Direction.Up)
+          secondCorridorDir = Direction.Right;
+        else
+          secondCorridorDir = Direction.Up;
+      }
+      else if (rooms[i].dirFullyAlignedWithExitRoom == Direction.Down &&
+            (chosenCorridor.direction == Direction.Up || chosenCorridor.direction == Direction.Down) ||
+          rooms[i].dirFullyAlignedWithExitRoom == Direction.Left &&
+            (chosenCorridor.direction == Direction.Left || chosenCorridor.direction == Direction.Right))
+      {
+        if (rooms[i].dirFullyAlignedWithExitRoom == Direction.Down)
+          secondCorridorDir = Direction.Left;
+        else
+          secondCorridorDir = Direction.Down;
+      }
+
+      if (secondCorridorDir != Direction.NONE)
+      {
+        nbrTilesLongestCorridor = possibleCorridors.Where(x => x.direction == secondCorridorDir).Max(x => x.tiles.Count);
+        longestCorridors = possibleCorridors.Where(x => x.tiles.Count == nbrTilesLongestCorridor).ToArray();
+        chosenCorridor = longestCorridors[Random.Range(0, longestCorridors.Length)];
+
+        foreach (var tilePos in chosenCorridor.tiles)
+          levelTiles[tilePos.x][tilePos.y].tileType = TileType.Corridor;
+      }
     }
   }
 
@@ -471,6 +517,12 @@ public class LevelGenerator : MonoBehaviour
       if (!IsRoomValid(sizeX, sizeY, posBottomLeftX, posBottomLeftY))
         continue;
 
+      Direction alignementWithExit = Direction.NONE;
+      if (posBottomLeftY >= (rooms[1].posBottomLeft.y - 1))
+        alignementWithExit = Direction.Left;
+      else if (posBottomLeftX >= (rooms[1].posBottomLeft.x - 1))
+        alignementWithExit = Direction.Down;
+
       for (int x = 0; x < sizeX; x++)
       {
         for (int y = 0; y < sizeY; y++)
@@ -486,7 +538,8 @@ public class LevelGenerator : MonoBehaviour
       Room room = new Room()
       {
         size = new Vector2Int(sizeX, sizeY),
-        posBottomLeft = new Vector2Int(posBottomLeftX, posBottomLeftY)
+        posBottomLeft = new Vector2Int(posBottomLeftX, posBottomLeftY),
+        dirFullyAlignedWithExitRoom = alignementWithExit
       };
       rooms.Add(room);
 
@@ -508,7 +561,8 @@ public class LevelGenerator : MonoBehaviour
     Room startRoom = new Room()
     {
       posBottomLeft = new Vector2Int(0, 0),
-      size = new Vector2Int(sizeStartX, sizeStartY)
+      size = new Vector2Int(sizeStartX, sizeStartY),
+      dirFullyAlignedWithExitRoom = Direction.NONE
     };
     rooms.Add(startRoom);
 
@@ -527,7 +581,8 @@ public class LevelGenerator : MonoBehaviour
     Room endRoom = new Room()
     {
       posBottomLeft = new Vector2Int(posXEnd, posYEnd),
-      size = new Vector2Int(sizeEndX, sizeEndY)
+      size = new Vector2Int(sizeEndX, sizeEndY),
+      dirFullyAlignedWithExitRoom = Direction.NONE
     };
     rooms.Add(endRoom);
   }

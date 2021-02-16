@@ -20898,6 +20898,7 @@ MonoBehaviour:
   dataLinesSfx: {fileID: 8300000, guid: 07dc163f5d681bd91abf52b34bd51039, type: 3}
   tookDamageSfx: {fileID: 8300000, guid: 236e7b9dafd0b8eafa68ab0e81f33f0d, type: 3}
   deathSfx: {fileID: 8300000, guid: 9e806fe6ccca06f72baae8b6a06bbf2f, type: 3}
+  dodgeSfx: {fileID: 8300000, guid: 308346783beb6afd7954a474ade1bccf, type: 3}
   atkVFX: {fileID: 872380040553242106}
   shieldVFX: {fileID: 5240265012273228332}
   deathVFX: {fileID: 1318898284988918847}
