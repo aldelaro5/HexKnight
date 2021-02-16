@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
   public int Hp { get => hp; }
   public int MaxHp { get => maxHp; }
 
-  private AudioSource audioSource;
+  public AudioSource audioSource { get; private set; }
 
   private WaitForSeconds turningDelay;
   private WaitForSeconds movementDelay;

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class HealthDrop : MonoBehaviour
 {
+  [SerializeField] private AudioClip collectSfx;
+
   private GameManager gameManager;
   private bool alreadyHealed = false;
 
@@ -19,6 +21,7 @@ public class HealthDrop : MonoBehaviour
       if (gameManager.Player.Hp < gameManager.Player.MaxHp)
       {
         gameManager.Player.Heal(1);
+        gameManager.Player.audioSource.PlayOneShot(collectSfx, gameManager.Settings.sfxVolume);
         alreadyHealed = true;
         Destroy(gameObject);
       }

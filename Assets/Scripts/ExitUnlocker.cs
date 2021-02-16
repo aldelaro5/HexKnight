@@ -22,7 +22,7 @@ public class ExitUnlocker : MonoBehaviour
 
   private void OnButtonPressed()
   {
-    audioSource.PlayOneShot(exitUnlockSfx, gameManager.Settings.sfxVolume);
+    gameManager.Player.audioSource.PlayOneShot(exitUnlockSfx, gameManager.Settings.sfxVolume);
     lvlGenerator.UnlockExit();
   }
 
