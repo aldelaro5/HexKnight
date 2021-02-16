@@ -29,6 +29,9 @@ public class Player : MonoBehaviour
   [SerializeField] private GameObject hoverObject;
   [SerializeField] private Camera mainCamera;
   [SerializeField] private GameObject knightObj;
+  [SerializeField] private Texture2D texRotateChip;
+  [SerializeField] private Texture2D texTranslateChip;
+  [SerializeField] private Material chipMaterial;
 
   public Camera MainCamera { get => mainCamera; }
   public int Hp { get => hp; }
@@ -78,6 +81,7 @@ public class Player : MonoBehaviour
     animator = GetComponent<Animator>();
     audioSource = GetComponent<AudioSource>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
+    chipMaterial.mainTexture = texRotateChip;
     movementDelay = new WaitForSeconds(movementDelayInSeconds);
     turningDelay = new WaitForSeconds(turningDelayInSeconds);
     attackShieldDelay = new WaitForSeconds(attackCooldownInSeconds);
@@ -102,12 +106,19 @@ public class Player : MonoBehaviour
 
   private void Update()
   {
+    chipMaterial.mainTexture = IsInLockedRotation() ? texTranslateChip : texRotateChip;
+
     if (IsBusy())
       return;
 
     hoverObject.transform.localRotation = Quaternion.identity;
 
     ProcessMovementInputs();
+  }
+
+  private bool IsInLockedRotation()
+  {
+    return gameManager.Inputs.Player.LockRotation.ReadValue<float>() == 1;
   }
 
   private void ProcessMovementInputs()
@@ -133,7 +144,7 @@ public class Player : MonoBehaviour
         StartCoroutine(MoveToDestinationTile(destTile));
       }
     }
-    else if (gameManager.Inputs.Player.LockRotation.ReadValue<float>() == 1)
+    else if (IsInLockedRotation())
     {
       if (gameManager.Inputs.Player.LeftRight.ReadValue<float>() == 1)
       {
