@@ -63,6 +63,7 @@ MonoBehaviour:
   floorPrefab: {fileID: 6243778842003243801, guid: e799c66afb358f11fbe4fb7f7595928e, type: 3}
   wallPrefab: {fileID: 6819998979313002283, guid: 9cd8866c5f5cc491fb14c8e6525d3676, type: 3}
   exitWallPrefab: {fileID: 3277349287274479842, guid: 02b90939256fa089eaaac8f8d8e3ee51, type: 3}
+  borderWallPrefab: {fileID: 3277349287274479842, guid: 932896ad255be365bbad443087a906a6, type: 3}
   roomPrefab: {fileID: 6243778842003243801, guid: 680a523c285e88994a58d1fde1746b9f, type: 3}
   corridorPrefab: {fileID: 8435076937535421658, guid: aa8616ee911962045905c0a6f672b489, type: 3}
   enemyPrefab: {fileID: 8600829949028676582, guid: d9620f7c8052770b78095659708d4339, type: 3}
