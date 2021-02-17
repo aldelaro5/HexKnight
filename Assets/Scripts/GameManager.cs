@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviour
   {
     Standard = 0,
     LongPlay,
-    Endless
+    Endless,
+    Speed
   }
 
   [SerializeField] private LevelGeneratorParams[] standardModeLevels;
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
   [SerializeField] private UIPage gameOverPage;
   [SerializeField] private HUD hud;
   [SerializeField] private float timeLimitStandardSeconds = 300;
+  [SerializeField] private float timeLimitSpeedSeconds = 900;
   [SerializeField] private float timeLimitLongPlaySeconds = 1800;
   [SerializeField] private int pointsOnHit = 50;
   [SerializeField] private int pointsOnKill = 100;
@@ -130,9 +132,11 @@ public class GameManager : MonoBehaviour
       case GameMode.Endless:
         StartEndless();
         break;
+      case GameMode.Speed:
+        StartSpeed();
+        break;
     }
 
-    generator.GenerateLevel(currentLevelsParams[0]);
     mainCameraAudioListener.enabled = false;
     mainCamera.enabled = false;
     hud.gameObject.SetActive(true);
@@ -144,9 +148,15 @@ public class GameManager : MonoBehaviour
     inGame = true;
   }
 
+  private void StartSpeed()
+  {
+    TimeLeft = timeLimitSpeedSeconds;
+    generator.GenerateLevel(GetLevelParamsForLevelIndexInCurve(0));
+  }
+
   private void StartEndless()
   {
-    throw new NotImplementedException();
+    generator.GenerateLevel(GetLevelParamsForLevelIndexInCurve(0));
   }
 
   private void StartLongPlay()
@@ -156,28 +166,35 @@ public class GameManager : MonoBehaviour
     currentLevelsParams = new LevelGeneratorParams[nbrLevelLongPlay];
     for (int i = 0; i < nbrLevelLongPlay; i++)
     {
-      LevelGeneratorParams levelParams = new LevelGeneratorParams();
-      levelParams.tileSize = 3;
-      levelParams.MinStartRoomSize = new Vector2Int(2, 2);
-      levelParams.MaxStartRoomSize = new Vector2Int(2, 2);
-      levelParams.MinEndRoomSize = new Vector2Int(2, 2);
-      levelParams.MaxEndRoomSize = new Vector2Int(2, 2);
-
-      levelParams.nbrEnemies = 3 + (i / 3);
-      levelParams.nbrHealthDrops = 2 + (int)Mathf.Round(Mathf.Sqrt((float)i));
-      levelParams.prefferedMinNbrRoom = (int)((9f/12f) * (float)i + 3);
-      levelParams.maxNbrRoom = levelParams.prefferedMinNbrRoom;
-      int minRoomSize = (int)(Mathf.Round(Mathf.Sqrt((float)i / 5f)) + 2f);
-      levelParams.MinRoomSize = new Vector2Int(minRoomSize, minRoomSize);
-      levelParams.MaxRoomSize = new Vector2Int(minRoomSize + 1, minRoomSize + 1);
-      levelParams.levelSize = 10 + i / 2;
-      if (i == 0)
-        levelParams.likelyhoodTurret = 0f;
-      else
-        levelParams.likelyhoodTurret = (i + 1) * (0.5f / (float)nbrLevelLongPlay);
+      LevelGeneratorParams levelParams = GetLevelParamsForLevelIndexInCurve(i);
 
       currentLevelsParams[i] = levelParams;
     }
+    generator.GenerateLevel(currentLevelsParams[0]);
+  }
+
+  private LevelGeneratorParams GetLevelParamsForLevelIndexInCurve(int index)
+  {
+    LevelGeneratorParams levelParams = new LevelGeneratorParams();
+    levelParams.tileSize = 3;
+    levelParams.MinStartRoomSize = new Vector2Int(2, 2);
+    levelParams.MaxStartRoomSize = new Vector2Int(2, 2);
+    levelParams.MinEndRoomSize = new Vector2Int(2, 2);
+    levelParams.MaxEndRoomSize = new Vector2Int(2, 2);
+
+    levelParams.nbrEnemies = 3 + (index / 3);
+    levelParams.nbrHealthDrops = 2 + (int)Mathf.Round(Mathf.Sqrt((float)index));
+    levelParams.prefferedMinNbrRoom = (int)((9f / 12f) * (float)index + 3);
+    levelParams.maxNbrRoom = levelParams.prefferedMinNbrRoom;
+    int minRoomSize = (int)(Mathf.Round(Mathf.Sqrt((float)index / 5f)) + 2f);
+    levelParams.MinRoomSize = new Vector2Int(minRoomSize, minRoomSize);
+    levelParams.MaxRoomSize = new Vector2Int(minRoomSize + 1, minRoomSize + 1);
+    levelParams.levelSize = 10 + index / 2;
+    if (index == 0)
+      levelParams.likelyhoodTurret = 0f;
+    else
+      levelParams.likelyhoodTurret = Mathf.Clamp((index + 1) * (0.5f / (float)nbrLevelLongPlay), 0f, 0.5f);
+    return levelParams;
   }
 
   private void StartStandardMode()
@@ -185,17 +202,21 @@ public class GameManager : MonoBehaviour
     TimeLeft = timeLimitStandardSeconds;
 
     currentLevelsParams = standardModeLevels;
+    generator.GenerateLevel(currentLevelsParams[0]);
   }
 
   private void Update()
   {
     if (inGame && mainCamera != null)
     {
-      TimeLeft -= Time.deltaTime;
-      if (TimeLeft <= 0)
+      if (gameMode != GameMode.Endless)
       {
-        TimeLeft = 0;
-        StartCoroutine(GameOver());
+        TimeLeft -= Time.deltaTime;
+        if (TimeLeft <= 0)
+        {
+          TimeLeft = 0;
+          StartCoroutine(GameOver());
+        }
       }
       hud.UpdateDisplay();
     }
@@ -203,18 +224,23 @@ public class GameManager : MonoBehaviour
 
   public void HitEnemy()
   {
-    AddScore(pointsOnHit);
+    if (gameMode != GameMode.Speed)
+      AddScore(pointsOnHit);
   }
 
   public void KilledEnemy()
   {
-    nbrEnemyKilled++;
-    AddScore(pointsOnKill);
+    if (gameMode != GameMode.Speed)
+    {
+      nbrEnemyKilled++;
+      AddScore(pointsOnKill);
+    }
   }
 
   public void ExitUnlocked()
   {
-    AddScore(pointsOnExitUnlock);
+    if (gameMode != GameMode.Speed)
+      AddScore(pointsOnExitUnlock);
   }
 
   private void AddScore(int pointsToAdd)
@@ -238,7 +264,10 @@ public class GameManager : MonoBehaviour
       Destroy(item.gameObject);
 
     currentLevelIndex++;
-    if (currentLevelIndex < currentLevelsParams.Length)
+
+    if (gameMode == GameMode.Endless || gameMode == GameMode.Speed)
+      generator.GenerateLevel(GetLevelParamsForLevelIndexInCurve(currentLevelIndex));
+    else if (currentLevelIndex < currentLevelsParams.Length)
       generator.GenerateLevel(currentLevelsParams[currentLevelIndex]);
     else
       StartCoroutine(EndGame());
@@ -255,7 +284,8 @@ public class GameManager : MonoBehaviour
 
     Destroy(generator.gameObject);
     ScorePage scorePage = endGamePage.GetComponent<ScorePage>();
-    CalculateFinalScore();
+    if (gameMode != GameMode.Endless && gameMode != GameMode.Speed)
+      CalculateFinalScore();
     scorePage.ResetPage();
     uiManager.ChangePage(endGamePage);
     Player.MainCamera.gameObject.SetActive(false);
@@ -288,6 +318,11 @@ public class GameManager : MonoBehaviour
 
   public IEnumerator GameOver()
   {
+    if (gameMode == GameMode.Endless || gameMode == GameMode.Speed)
+    {
+      StartCoroutine(EndGame());
+      yield break;
+    }
     inGame = false;
     Inputs.Player.Disable();
     hud.gameObject.SetActive(false);

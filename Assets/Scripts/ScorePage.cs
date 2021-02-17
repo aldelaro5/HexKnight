@@ -9,10 +9,13 @@ public class ScorePage : MonoBehaviour
   [SerializeField] private CanvasRenderer EnemiesKilledPanel;
   [SerializeField] private CanvasRenderer timeLeftPanel;
   [SerializeField] private CanvasRenderer scorePanel;
+  [SerializeField] private CanvasRenderer levelsPanel;
+  [SerializeField] private CanvasRenderer promptPanel;
   [SerializeField] private TMP_Text textHealthLeft;
   [SerializeField] private TMP_Text textEnemiesKilled;
   [SerializeField] private TMP_Text textTimeLeft;
   [SerializeField] private TMP_Text textScore;
+  [SerializeField] private TMP_Text textLevels;
 
   public bool isDone { get; private set; } = false;
 
@@ -28,24 +31,44 @@ public class ScorePage : MonoBehaviour
     healthLeftPanel.gameObject.SetActive(false);
     EnemiesKilledPanel.gameObject.SetActive(false);
     timeLeftPanel.gameObject.SetActive(false);
+    levelsPanel.gameObject.SetActive(false);
     scorePanel.gameObject.SetActive(false);
+    promptPanel.gameObject.SetActive(false);
   }
 
   public IEnumerator ShowPage()
   {
     isDone = false;
     yield return new WaitForSeconds(0.5f);
-    textHealthLeft.text = gameManager.Player.Hp + " / " + gameManager.Player.MaxHp;
-    healthLeftPanel.gameObject.SetActive(true);
+    if (gameManager.gameMode != GameManager.GameMode.Endless && gameManager.gameMode != GameManager.GameMode.Speed)
+    {
+      textHealthLeft.text = gameManager.Player.Hp + " / " + gameManager.Player.MaxHp;
+      healthLeftPanel.gameObject.SetActive(true);
+      yield return new WaitForSeconds(0.5f);
+    }
+    if (gameManager.gameMode != GameManager.GameMode.Speed)
+    {
+      textEnemiesKilled.text = gameManager.nbrEnemyKilled.ToString();
+      EnemiesKilledPanel.gameObject.SetActive(true);
+      yield return new WaitForSeconds(0.5f);
+    }
+
+    textLevels.text = gameManager.currentLevelIndex.ToString();
+    levelsPanel.gameObject.SetActive(true);
     yield return new WaitForSeconds(0.5f);
-    textEnemiesKilled.text = gameManager.nbrEnemyKilled.ToString();
-    EnemiesKilledPanel.gameObject.SetActive(true);
-    yield return new WaitForSeconds(0.5f);
-    textTimeLeft.text = gameManager.strTimeLeft;
-    timeLeftPanel.gameObject.SetActive(true);
-    yield return new WaitForSeconds(0.5f);
-    textScore.text = gameManager.Score.ToString().PadLeft(6, '0');
-    scorePanel.gameObject.SetActive(true);
+
+    if (gameManager.gameMode != GameManager.GameMode.Endless && gameManager.gameMode != GameManager.GameMode.Speed)
+    {
+      textTimeLeft.text = gameManager.strTimeLeft;
+      timeLeftPanel.gameObject.SetActive(true);
+      yield return new WaitForSeconds(0.5f);
+    }
+    if (gameManager.gameMode != GameManager.GameMode.Speed)
+    {
+      textScore.text = gameManager.Score.ToString().PadLeft(6, '0');
+      scorePanel.gameObject.SetActive(true);
+    }
+    promptPanel.gameObject.SetActive(true);
     isDone = true;
     yield break;
   }
