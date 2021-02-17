@@ -1,16 +1,7 @@
 {
-    "musicVolume": 0.49999991059303286,
+    "musicVolume": 1.0,
     "sfxVolume": 1.0,
-    "bindingOverridesKb": [
-        {
-            "id": "c07878bb-bb60-4715-bae5-4176ce24585b",
-            "overridePath": "<Keyboard>/upArrow"
-        },
-        {
-            "id": "fa8eb40b-e926-4e98-aa53-1c7cf0db7f35",
-            "overridePath": "<Keyboard>/upArrow"
-        }
-    ],
+    "bindingOverridesKb": [],
     "bindingOverridesGamepad": [
         {
             "id": "2ef4ff26-8d27-4c1b-b4d0-da6435563b86",

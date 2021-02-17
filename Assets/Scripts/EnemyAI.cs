@@ -29,7 +29,7 @@ public class EnemyAI : MonoBehaviour
 
   private readonly Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>().ToArray();
   private LevelGenerator lvlGenerator;
-  private Player playerMovement;
+  private Player player;
   private bool isMoving = false;
   private bool isIdling = false;
   private bool isTakingDamage = false;
@@ -43,7 +43,7 @@ public class EnemyAI : MonoBehaviour
     audioSource = GetComponent<AudioSource>();
     lvlGenerator = FindObjectOfType<LevelGenerator>();
     gameManager = FindObjectOfType<GameManager>();
-    playerMovement = FindObjectOfType<Player>();
+    player = FindObjectOfType<Player>();
     idleDelay = new WaitForSeconds(idleTimeInSeconds);
     attackDelay = new WaitForSeconds(attackCooldownInSeconds);
     currentTile = lvlGenerator.Vec3CenterToTile(transform.position);
@@ -62,7 +62,10 @@ public class EnemyAI : MonoBehaviour
     }
     lvlGenerator.FreeTile(currentTile);
     currentTile = destinationTile;
-    idlingCoroutine = StartCoroutine(Idle());
+    if (Math.Abs(currentTile.x - player.Tile.x) + Math.Abs(currentTile.y - player.Tile.y) == 1)
+      idlingCoroutine = StartCoroutine(WaitToAttack());
+    else
+      idlingCoroutine = StartCoroutine(Idle());
     isMoving = false;
     yield break;
   }
@@ -89,18 +92,18 @@ public class EnemyAI : MonoBehaviour
       return;
 
     Direction dir = Direction.NONE;
-    if (Math.Abs(currentTile.x - playerMovement.Tile.x) +
-        Math.Abs(currentTile.y - playerMovement.Tile.y) == 1)
+    if (Math.Abs(currentTile.x - player.Tile.x) +
+        Math.Abs(currentTile.y - player.Tile.y) == 1)
     {
-      transform.LookAt(playerMovement.transform);
+      transform.LookAt(player.transform);
       if (isIdling || isTakingDamage)
         return;
 
       AIAttack();
       return;
     }
-    else if (Math.Abs(currentTile.x - playerMovement.Tile.x) +
-             Math.Abs(currentTile.y - playerMovement.Tile.y) <= tilesAttackRange)
+    else if (Math.Abs(currentTile.x - player.Tile.x) +
+             Math.Abs(currentTile.y - player.Tile.y) <= tilesAttackRange)
     {
       if (isIdling)
       {
@@ -109,7 +112,7 @@ public class EnemyAI : MonoBehaviour
       }
 
       dir = DetermineDirectionToApproachPlayer();
-      transform.LookAt(playerMovement.transform);
+      transform.LookAt(player.transform);
       AIMove(dir, false);
     }
     else
@@ -126,28 +129,28 @@ public class EnemyAI : MonoBehaviour
   {
     audioSource.PlayOneShot(zapSfx, gameManager.Settings.sfxVolume);
     atkVFX.Play();
-    playerMovement.GotAttacked(1);
+    player.GotAttacked(1);
     idlingCoroutine = StartCoroutine(WaitToAttack());
   }
 
   private Direction DetermineDirectionToApproachPlayer()
   {
-    if (currentTile.x < playerMovement.Tile.x)
+    if (currentTile.x < player.Tile.x)
     {
       if (lvlGenerator.GetTileInfo(new Vector2Int(currentTile.x + 1, currentTile.y)).state == LevelGenerator.TileState.Free)
         return Direction.Right;
     }
-    if (currentTile.x > playerMovement.Tile.x)
+    if (currentTile.x > player.Tile.x)
     {
       if (lvlGenerator.GetTileInfo(new Vector2Int(currentTile.x - 1, currentTile.y)).state == LevelGenerator.TileState.Free)
         return Direction.Left;
     }
-    if (currentTile.y < playerMovement.Tile.y)
+    if (currentTile.y < player.Tile.y)
     {
       if (lvlGenerator.GetTileInfo(new Vector2Int(currentTile.x, currentTile.y + 1)).state == LevelGenerator.TileState.Free)
         return Direction.Up;
     }
-    if (currentTile.y > playerMovement.Tile.y)
+    if (currentTile.y > player.Tile.y)
     {
       if (lvlGenerator.GetTileInfo(new Vector2Int(currentTile.x, currentTile.y - 1)).state == LevelGenerator.TileState.Free)
         return Direction.Down;

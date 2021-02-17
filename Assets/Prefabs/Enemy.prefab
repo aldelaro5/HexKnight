@@ -29479,7 +29479,7 @@ MonoBehaviour:
   movementSpeed: 10
   tilesAttackRange: 3
   idleTimeInSeconds: 2
-  attackCooldownInSeconds: 1.75
+  attackCooldownInSeconds: 1.5
   nbrIFrames: 60
   hp: 2
 --- !u!95 &8908503446021196653

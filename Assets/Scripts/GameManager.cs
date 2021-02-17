@@ -164,7 +164,7 @@ public class GameManager : MonoBehaviour
       levelParams.MaxEndRoomSize = new Vector2Int(2, 2);
 
       levelParams.nbrEnemies = 3 + (i / 3);
-      levelParams.nbrHealthDrops = 3 + (i / 8);
+      levelParams.nbrHealthDrops = 2 + (int)Mathf.Round(Mathf.Sqrt((float)i));
       levelParams.prefferedMinNbrRoom = (int)((9f/12f) * (float)i + 3);
       levelParams.maxNbrRoom = levelParams.prefferedMinNbrRoom;
       int minRoomSize = (int)(Mathf.Round(Mathf.Sqrt((float)i / 5f)) + 2f);

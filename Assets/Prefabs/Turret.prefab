@@ -26796,6 +26796,6 @@ MonoBehaviour:
   MainMesh: {fileID: 2656862866587582646}
   tilesAttackRange: 5
   idleTimeInSeconds: 5
-  attackCooldownInSeconds: 3
+  attackCooldownInSeconds: 2
   nbrIFrames: 60
   hp: 2
