@@ -69,8 +69,15 @@ public class GameManager : MonoBehaviour
     ApplyBindingsOverrides();
     Inputs.Player.Disable();
     Inputs.UI.Enable();
+    Inputs.UI.Cancel.performed += OnUICancel;
     if (mainCamera != null)
       mainCameraAudioListener = mainCamera.GetComponent<AudioListener>();
+  }
+
+  private void OnUICancel(InputAction.CallbackContext ctx)
+  {
+    if (uiManager.CurrentPage.btnBack != null)
+      uiManager.CurrentPage.btnBack.onClick.Invoke();
   }
 
   private void ApplyBindingsOverrides()

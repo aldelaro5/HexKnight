@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
   readonly Color blackTransparent = new Color(0, 0, 0, 0);
   readonly Color blackOpaque = new Color(0, 0, 0, 1);
 
+  public UIPage CurrentPage { get => currentPage; }
   public bool Fading { get => fading; }
   private bool fading = false;
 
