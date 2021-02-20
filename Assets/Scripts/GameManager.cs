@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
     if (File.Exists(settingsFilename))
       LoadSettings();
 
+    Screen.SetResolution(Settings.resWidth, Settings.resHeight, Settings.fullScreen);
     ApplyBindingsOverrides();
     Inputs.Player.Disable();
     Inputs.UI.Enable();

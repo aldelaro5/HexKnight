@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour
     uiInputModule.submit = InputActionReference.Create(gameManager.Inputs.UI.Submit);
     uiInputModule.leftClick = InputActionReference.Create(gameManager.Inputs.UI.Click);
     uiInputModule.cancel = InputActionReference.Create(gameManager.Inputs.UI.Cancel);
+    uiInputModule.scrollWheel = InputActionReference.Create(gameManager.Inputs.UI.Scroll);
   }
 
   public IEnumerator FadeOut(bool instant)

@@ -1,63 +1,9 @@
 {
     "musicVolume": 1.0,
     "sfxVolume": 1.0,
+    "fullScreen": true,
+    "resHeight": 1080,
+    "resWidth": 1920,
     "bindingOverridesKb": [],
-    "bindingOverridesGamepad": [
-        {
-            "id": "2ef4ff26-8d27-4c1b-b4d0-da6435563b86",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Hat/up"
-        },
-        {
-            "id": "203f904f-1bd9-4ed2-a86d-c9b0cd3943ca",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Hat/down"
-        },
-        {
-            "id": "911ab6bb-03a0-42a5-baff-eaaaa3a820ec",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Hat/left"
-        },
-        {
-            "id": "780accda-2956-44dd-a542-fdfb859816d5",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Hat/right"
-        },
-        {
-            "id": "8902cb9c-dd99-43ca-8b23-1b244f729e0b",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Z"
-        },
-        {
-            "id": "f8d0164d-19f0-4151-9425-8965332c1f90",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Y"
-        },
-        {
-            "id": "1666ef5a-ad06-4ce8-98e8-0fd3d96eccda",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Z"
-        },
-        {
-            "id": "5e7c8d2b-ae4a-43bb-9125-4b462898a653",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Y"
-        },
-        {
-            "id": "fe0cc703-cf28-40fe-b848-020e7325fad8",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Hat/down"
-        },
-        {
-            "id": "2e86bbf3-bb63-4e42-8c55-3ab97d61d811",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Hat/up"
-        },
-        {
-            "id": "0dfe5212-2a65-43b3-9c0e-5a6ca06ae775",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Hat/left"
-        },
-        {
-            "id": "3d1e9761-9517-430e-8343-9475347e859b",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/Hat/right"
-        },
-        {
-            "id": "82d1e6a9-cb6d-44e3-9e44-eb625b9fd035",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/TriggerRight"
-        },
-        {
-            "id": "1e23b47b-4b17-4062-a741-9f59e62f4d46",
-            "overridePath": "<Linux::NintendoCoLtd::BenjaminShockleyMiniSAM>/ThumbLeft"
-        }
-    ]
+    "bindingOverridesGamepad": []
 }

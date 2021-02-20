@@ -41,6 +41,9 @@ public class Settings
 {
   public float musicVolume = 1f;
   public float sfxVolume = 1f;
+  public bool fullScreen = false;
+  public int resHeight = 1080;
+  public int resWidth = 1920;
   public List<bindingOverrideSetting> bindingOverridesKb = new List<bindingOverrideSetting>();
   public List<bindingOverrideSetting> bindingOverridesGamepad = new List<bindingOverrideSetting>();
 }
