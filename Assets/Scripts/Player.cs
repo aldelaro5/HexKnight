@@ -42,6 +42,9 @@ public class Player : MonoBehaviour
   private WaitForSeconds turningDelay;
   private WaitForSeconds movementDelay;
   private WaitForSeconds attackShieldDelay;
+  private WaitForSeconds smallerAttackDelay;
+
+  private Coroutine atkCoroutine;
 
   private Action<InputAction.CallbackContext> attackCallback;
   private Action<InputAction.CallbackContext> shieldCallback;
@@ -85,6 +88,7 @@ public class Player : MonoBehaviour
     movementDelay = new WaitForSeconds(movementDelayInSeconds);
     turningDelay = new WaitForSeconds(turningDelayInSeconds);
     attackShieldDelay = new WaitForSeconds(attackCooldownInSeconds);
+    smallerAttackDelay = new WaitForSeconds(attackCooldownInSeconds / 4f);
   }
 
   public void UnhookInputEvents()
@@ -199,8 +203,22 @@ public class Player : MonoBehaviour
     }
     else
     {
-      StartCoroutine(Attack(destTile));
+      atkCoroutine = StartCoroutine(Attack(destTile));
     }
+  }
+
+  public void LastAttackKilled()
+  {
+    StopCoroutine(atkCoroutine);
+    StartCoroutine(HalfAttackDelay());
+  }
+
+  private IEnumerator HalfAttackDelay()
+  {
+    yield return smallerAttackDelay;
+    atkVFX.Stop();
+    isAttacking = false;
+    yield break;
   }
 
   public void ResetTile(Vector3 startCenter)

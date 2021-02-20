@@ -184,6 +184,7 @@ public class EnemyAI : MonoBehaviour
 
   private void Die()
   {
+    player.LastAttackKilled();
     Destroy(MainMesh);
     deathVFX.Play();
     Destroy(gameObject, deathVFX.main.duration);
