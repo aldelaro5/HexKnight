@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,6 @@ public class HUD : MonoBehaviour
   [SerializeField] private CanvasRenderer scorePanel;
   [SerializeField] private TMP_Text scoreText;
   [SerializeField] private TMP_Text hpText;
-  [SerializeField] private TMP_Text maxHpText;
   [SerializeField] private TMP_Text timeLeftText;
   [SerializeField] private TMP_Text levelText;
 
@@ -21,8 +21,10 @@ public class HUD : MonoBehaviour
 
   public void UpdateDisplay()
   {
-    hpText.text = gameManager.Player.Hp.ToString();
-    maxHpText.text = gameManager.Player.MaxHp.ToString();
+    int hp = gameManager.Player.Hp;
+    int maxHp = gameManager.Player.MaxHp;
+    string hpStr = new string('*', hp);
+    hpText.text = "[" + hpStr.PadRight(maxHp, '_') + "]";
     if (gameManager.gameMode == GameManager.GameMode.Speed)
       scorePanel.gameObject.SetActive(false);
     else
