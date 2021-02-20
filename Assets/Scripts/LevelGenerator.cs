@@ -359,6 +359,13 @@ public class LevelGenerator : MonoBehaviour
         else
           secondCorridorDir = Direction.Up;
       }
+      else if (i == 1)
+      {
+        if (chosenCorridor.direction == Direction.Down)
+          secondCorridorDir = Direction.Left;
+        else
+          secondCorridorDir = Direction.Down;
+      }
       else if (rooms[i].dirFullyAlignedWithExitRoom == Direction.Down &&
             (chosenCorridor.direction == Direction.Up || chosenCorridor.direction == Direction.Down) ||
           rooms[i].dirFullyAlignedWithExitRoom == Direction.Left &&
@@ -373,7 +380,8 @@ public class LevelGenerator : MonoBehaviour
       if (secondCorridorDir != Direction.NONE)
       {
         nbrTilesLongestCorridor = possibleCorridors.Where(x => x.direction == secondCorridorDir).Max(x => x.tiles.Count);
-        longestCorridors = possibleCorridors.Where(x => x.tiles.Count == nbrTilesLongestCorridor).ToArray();
+        longestCorridors = possibleCorridors.Where(x => x.direction == secondCorridorDir &&
+                                                        x.tiles.Count == nbrTilesLongestCorridor).ToArray();
         chosenCorridor = longestCorridors[Random.Range(0, longestCorridors.Length)];
 
         foreach (var tilePos in chosenCorridor.tiles)
@@ -547,6 +555,10 @@ public class LevelGenerator : MonoBehaviour
       freeRoomKnownToExists = false;
       nbrRoomGenerated++;
     }
+
+    Room startRoom = rooms[0];
+    RemoveWallsAroundRoom(startRoom.size.x, startRoom.size.y, 
+                          startRoom.posBottomLeft.x, startRoom.posBottomLeft.y);
   }
 
   private void GenerateStartAndEndRoom()
@@ -620,6 +632,45 @@ public class LevelGenerator : MonoBehaviour
       {
         if (levelTiles[columnPos][posBottomLeftY + sizeY].tileType != TileType.ExitRoomWall)
           levelTiles[columnPos][posBottomLeftY + sizeY].tileType = wallType;
+      }
+    }
+  }
+
+  private void RemoveWallsAroundRoom(int sizeX, int sizeY, int posBottomLeftX, int posBottomLeftY)
+  {
+    for (int i = 0; i < sizeY; i++)
+    {
+      int rowPos = i + posBottomLeftY;
+      if (posBottomLeftX - 1 >= 0)
+      {
+        if (levelTiles[posBottomLeftX - 1][rowPos].tileType != TileType.ExitRoomWall &&
+            levelTiles[posBottomLeftX - 1][rowPos].tileType != TileType.Corridor)
+          levelTiles[posBottomLeftX - 1][rowPos].tileType = TileType.Floor;
+      }
+
+      if (posBottomLeftX + sizeX < levelParams.levelSize)
+      {
+        if (levelTiles[posBottomLeftX + sizeX][rowPos].tileType != TileType.ExitRoomWall &&
+            levelTiles[posBottomLeftX + sizeX][rowPos].tileType != TileType.Corridor)
+          levelTiles[posBottomLeftX + sizeX][rowPos].tileType = TileType.Floor;
+      }
+    }
+
+    for (int j = 0; j < sizeX; j++)
+    {
+      int columnPos = j + posBottomLeftX;
+      if (posBottomLeftY - 1 >= 0)
+      {
+        if (levelTiles[columnPos][posBottomLeftY - 1].tileType != TileType.ExitRoomWall &&
+            levelTiles[columnPos][posBottomLeftY - 1].tileType != TileType.Corridor)
+          levelTiles[columnPos][posBottomLeftY - 1].tileType = TileType.Floor;
+      }
+
+      if (posBottomLeftY + sizeY < levelParams.levelSize)
+      {
+        if (levelTiles[columnPos][posBottomLeftY + sizeY].tileType != TileType.ExitRoomWall &&
+            levelTiles[columnPos][posBottomLeftY + sizeY].tileType != TileType.Corridor)
+          levelTiles[columnPos][posBottomLeftY + sizeY].tileType = TileType.Floor;
       }
     }
   }

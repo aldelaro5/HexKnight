@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.0313721, g: 0.0313721, b: 0.0313721, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -237,7 +237,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: levelParams.maxNbrRoom
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: levelParams.nbrEnemies
@@ -261,7 +261,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3736194495924249739, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: levelParams.prefferedMinNbrRoom
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3736194495924249748, guid: 7d7818650fa283fee9f3d558bf433754, type: 3}
       propertyPath: m_RootOrder
