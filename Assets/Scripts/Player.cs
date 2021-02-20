@@ -229,6 +229,7 @@ public class Player : MonoBehaviour
   {
     gameManager.Inputs.Player.Disable();
     knightObj.SetActive(false);
+    audioSource.Stop();
     deathVFX.Play();
     audioSource.PlayOneShot(deathSfx, gameManager.Settings.sfxVolume);
     yield return new WaitForSeconds(2);

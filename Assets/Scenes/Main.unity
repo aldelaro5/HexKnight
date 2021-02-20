@@ -20010,7 +20010,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3815543570867801113, guid: 75f7d5383679da88cafbebbb055e3f7a, type: 3}
       propertyPath: m_isRightToLeft
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3815543570867801113, guid: 75f7d5383679da88cafbebbb055e3f7a, type: 3}
       propertyPath: m_VerticalAlignment
@@ -21323,6 +21323,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1438937399}
   - component: {fileID: 1438937398}
+  - component: {fileID: 1438937400}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -21426,6 +21427,10 @@ MonoBehaviour:
   pointsPerHPLeft: 300
   pointsPerSecondsLeft: 10
   nbrLevelLongPlay: 30
+  musicStandardMode: {fileID: 11400000, guid: b8befd4f3a0060fa1b7725e561137202, type: 2}
+  musicLongPlayMode: {fileID: 11400000, guid: 73cd512c03851bed3b6b26dbd9726bec, type: 2}
+  musicEndlessMode: {fileID: 11400000, guid: 9bc219b166d279715a5f429af5ed4742, type: 2}
+  musicSpeedMode: {fileID: 11400000, guid: d6d78ac885129d466b46b6b92e936879, type: 2}
 --- !u!4 &1438937399
 Transform:
   m_ObjectHideFlags: 0
@@ -21445,6 +21450,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1438937400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438937397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04b4c396fce37bbb58c7e58ef21c1033, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testLoop: 0
 --- !u!1 &1442970135
 GameObject:
   m_ObjectHideFlags: 0
