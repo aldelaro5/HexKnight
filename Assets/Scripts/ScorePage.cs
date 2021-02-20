@@ -16,7 +16,8 @@ public class ScorePage : MonoBehaviour
   [SerializeField] private TMP_Text textTimeLeft;
   [SerializeField] private TMP_Text textScore;
   [SerializeField] private TMP_Text textLevels;
-
+  [SerializeField] private TMP_Text textMode;
+  
   public bool isDone { get; private set; } = false;
 
   private GameManager gameManager;
@@ -39,6 +40,22 @@ public class ScorePage : MonoBehaviour
   public IEnumerator ShowPage()
   {
     isDone = false;
+    switch (gameManager.gameMode)
+    {
+      case GameManager.GameMode.Standard:
+        textMode.text = "Standard";
+        break;
+      case GameManager.GameMode.LongPlay:
+        textMode.text = "Challenge";
+        break;
+      case GameManager.GameMode.Endless:
+        textMode.text = "Endless";
+        break;
+      case GameManager.GameMode.Speed:
+        textMode.text = "Speed";
+        break;
+    }
+
     yield return new WaitForSeconds(0.5f);
     if (gameManager.gameMode != GameManager.GameMode.Endless && gameManager.gameMode != GameManager.GameMode.Speed)
     {

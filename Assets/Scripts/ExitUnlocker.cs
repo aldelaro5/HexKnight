@@ -12,6 +12,8 @@ public class ExitUnlocker : MonoBehaviour
   private AudioSource audioSource;
   private GameManager gameManager;
 
+  private bool buttonIsAlreadyPressed = false;
+
   private void Start()
   {
     gameManager = FindObjectOfType<GameManager>();
@@ -28,7 +30,11 @@ public class ExitUnlocker : MonoBehaviour
 
   public void PressButton()
   {
-    audioSource.PlayOneShot(buttonPressedSfx, gameManager.Settings.sfxVolume);
-    animator.SetTrigger("ExitUnlocked");
-  } 
+    if (!buttonIsAlreadyPressed)
+    {
+      buttonIsAlreadyPressed = true;
+      audioSource.PlayOneShot(buttonPressedSfx, gameManager.Settings.sfxVolume);
+      animator.SetTrigger("ExitUnlocked");
+    }
+  }
 }
