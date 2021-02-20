@@ -6,9 +6,19 @@ public class MusicPlayer : MonoBehaviour
 {
   [SerializeField] bool testLoop = false;
 
-  public IEnumerator PlayLoopableMusic(AudioSource source, LoopableAudio music)
+  private AudioSource source;
+  private GameManager gameManager;
+
+  private void Awake()
+  {
+    source = GetComponent<AudioSource>();
+    gameManager = FindObjectOfType<GameManager>();
+  }
+
+  public IEnumerator PlayLoopableMusic(LoopableAudio music)
   {
     source.clip = music.clip;
+    source.volume = gameManager.Settings.musicVolume;
     source.Play();
     if (testLoop && Application.isEditor)
       source.time = music.timeEnd - 5f;
@@ -37,5 +47,10 @@ public class MusicPlayer : MonoBehaviour
           source.time = music.timeStart;
       }
     }
+  }
+
+  public void StopPlaying()
+  {
+    source.Stop();
   }
 }

@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
   [SerializeField] private int pointsPerHPLeft = 300;
   [SerializeField] private int pointsPerSecondsLeft = 20;
   [SerializeField] private int nbrLevelLongPlay = 50;
+  [SerializeField] private MusicPlayer musicPlayer;
   [SerializeField] private LoopableAudio musicStandardMode;
   [SerializeField] private LoopableAudio musicLongPlayMode;
   [SerializeField] private LoopableAudio musicEndlessMode;
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
 
   private LevelGenerator generator;
   public Settings Settings { get; private set; }
+  public MusicPlayer MusicPlayer { get => musicPlayer; }
   public Player Player { get; private set; }
   public int Score { get; private set; }
   public float TimeLeft { get; private set; }
@@ -61,7 +63,6 @@ public class GameManager : MonoBehaviour
   private AudioListener mainCameraAudioListener;
   private LevelGeneratorParams[] currentLevelsParams;
   private LoopableAudio currentMusic;
-  private MusicPlayer musicPlayer;
   private Coroutine musicPlaying;
 
   private const string settingsFilename = "settings.json";
@@ -79,7 +80,6 @@ public class GameManager : MonoBehaviour
     Inputs.UI.Cancel.performed += OnUICancel;
     if (mainCamera != null)
       mainCameraAudioListener = mainCamera.GetComponent<AudioListener>();
-    musicPlayer = GetComponent<MusicPlayer>();
   }
 
   private void OnUICancel(InputAction.CallbackContext ctx)
@@ -160,7 +160,7 @@ public class GameManager : MonoBehaviour
     Inputs.UI.Disable();
     Player = generator.Player.GetComponent<Player>();
     hud.UpdateDisplay();
-    musicPlaying = StartCoroutine(musicPlayer.PlayLoopableMusic(Player.audioSource, currentMusic));
+    musicPlaying = StartCoroutine(musicPlayer.PlayLoopableMusic(currentMusic));
     inGame = true;
   }
 
@@ -237,7 +237,7 @@ public class GameManager : MonoBehaviour
         if (TimeLeft <= 0)
         {
           TimeLeft = 0;
-          Player.audioSource.Stop();
+          musicPlayer.StopPlaying();
           StartCoroutine(GameOver());
         }
       }
@@ -299,7 +299,7 @@ public class GameManager : MonoBehaviour
   private IEnumerator EndGame()
   {
     inGame = false;
-    Player.audioSource.Stop();
+    musicPlayer.StopPlaying();
     Inputs.Player.Disable();
     hud.gameObject.SetActive(false);
     StartCoroutine(uiManager.FadeOut(false));
@@ -392,6 +392,7 @@ public class GameManager : MonoBehaviour
       Destroy(generator.gameObject);
     Player.UnhookInputEvents();
     StopCoroutine(musicPlaying);
+    musicPlayer.StopPlaying();
     Inputs.Player.Disable();
     Destroy(Player.gameObject);
     currentLevelIndex = 0;

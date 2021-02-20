@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 901b60e1b95f4a3a7b89bda1eba98c9a, type: 3}
   m_Name: EndlessModeMusic
   m_EditorClassIdentifier: 
-  clip: {fileID: 8300000, guid: ac6318b3146abf3f1be8b30b9fc9ad5c, type: 3}
+  clip: {fileID: 8300000, guid: c9b9ff28463c4d9f4910b8f914cc9e41, type: 3}
   timeStart: 0.725
   timeEnd: 275
